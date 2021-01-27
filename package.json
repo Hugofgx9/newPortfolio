@@ -1,0 +1,21 @@
+{
+  "name": "newPorfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.18.0",
+    "sass": "^1.32.5"
+  },
+  "dependencies": {
+    "gsap": "^3.6.0"
+  }
+}

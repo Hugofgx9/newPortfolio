@@ -1,0 +1,24 @@
+@import 'init.scss';
+@import 'font.scss';
+
+body{
+	font-family: Helvetica;
+	width: 100vw;
+	height: 100vh;
+	background: #1C1C1C;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	#container{
+		display: grid;
+		grid-auto-flow: column;
+
+		.item{
+			background: white;
+			height: 50vh;
+			width: 0vw;
+			margin-right: -1vw;
+		}
+	}
+}
