@@ -5,10 +5,12 @@ body{
 	font-family: Helvetica;
 	width: 100vw;
 	height: 100vh;
+	overflow: hidden;
 	background: #1C1C1C;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	position: relative;
 
 	#container{
 		display: grid;
@@ -20,5 +22,13 @@ body{
 			width: 0vw;
 			margin-right: -1vw;
 		}
+	}
+
+	canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
 	}
 }
