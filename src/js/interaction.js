@@ -9,6 +9,7 @@ export default class Interact {
 		this.sceneCtx = sceneCtx;
 		this.planes = planes;
 		new Interaction(this.sceneCtx.renderer, this.scene, this.sceneCtx.camera);
+		this.openScale = 2;
 
 		this.bindEvents();
 
@@ -33,10 +34,12 @@ export default class Interact {
 		if (!plane.isOpen && allPlanesAreClosed) {
 			this.openPlane( plane );
 
+		//another plane is open
 		} else if (!plane.isOpen && !allPlanesAreClosed) {
 			let openedPlane = this.planes.find( plane => plane.isOpen == true)
-			this.closePlane( openedPlane );
-			this.openPlane( plane);
+			//this.closePlane( openedPlane );
+			//this.openPlane( plane);
+			this.openOtherPlane( plane, openedPlane);
 
 		} else if (plane.isOpen) {
 			this.closePlane( plane );
@@ -45,40 +48,44 @@ export default class Interact {
 
 	openPlane( plane ) {
 
-		let dur = 0.7;
+		let duration = 0.7;
 		let i = this.planes.indexOf(plane);
 		plane.isOpen = true;
 
-		gsap.to(plane.obj.scale, dur, {
-			x: 2,
-			ease: 'power3.out',
+		//20 is margin
+		let planeX = i * (this.sceneCtx.baseWidth + 20);
+
+		//center
+		gsap.to(this.sceneCtx.planeGroup.position, 1, {
+			x: -planeX,
+			ease: 'power2.inOut',
 		});
-		gsap.to(plane.obj.material.uniforms.u_scale.value, dur * 1.5, {
-			x: 2,
+
+		// scale
+		gsap.to(plane.obj.material.uniforms.u_scale.value, duration * 1.2, {
+			x: this.openScale,
 			ease: 'power3.out',
 		})
-		this.movePlanes(i, 20);
+
+		let offset = this.sceneCtx.baseWidth / 2;
+		this.moveOtherPlanes(i, offset);
 
 	}
 
 	closePlane( plane ) {
 
-		let dur = 0.7;
+		let duration = 0.7;
 		let i = this.planes.indexOf(plane);
 		plane.isOpen = false;
 
-		gsap.to(plane.obj.scale, dur, {
-			x: 1,
-			ease: 'power3.out',
-		});
-		gsap.to(plane.obj.material.uniforms.u_scale.value, dur * 1.5, {
+		gsap.to(plane.obj.material.uniforms.u_scale.value, duration * 1.2, {
 			x: 1,
 			ease: 'power3.out',
 		})
-		this.movePlanes(i, 0);
+		this.moveOtherPlanes(i, 0);
 	}
 
-	movePlanes( index, x) {
+	moveOtherPlanes( index, x) {
 		this.planes.forEach( ( plane, i ) => {
 
 			if ( i > index ) {
@@ -95,4 +102,65 @@ export default class Interact {
 		});
 	}
 
+	openOtherPlane ( planeToOpen, planeToClose ) {
+
+		let x = this.sceneCtx.baseWidth / 2;
+		let duration = 0.7;
+
+		let i_ToOpen = this.planes.indexOf( planeToOpen );
+		let i_ToClose = this.planes.indexOf( planeToClose );
+		let newIndexIsGreater = i_ToOpen > i_ToClose;
+
+		//20 is margin
+		let planeX = i_ToOpen * (this.sceneCtx.baseWidth + 20);
+
+		//center new
+		gsap.to(this.sceneCtx.planeGroup.position, 1, {
+			x: - planeX,
+			ease: 'power2.inOut',
+		});
+
+		//close plane
+		gsap.to(planeToClose.obj.material.uniforms.u_scale.value, duration * 1.2, {
+			x: 1,
+			ease: 'power3.out',
+		})
+
+		//open plane
+		gsap.to(planeToOpen.obj.material.uniforms.u_scale.value, duration * 1.2, {
+			x: this.openScale,
+			ease: 'power3.out',
+		})
+
+    //move planes
+		gsap.to(planeToOpen.obj.position, duration, {
+			x: planeToOpen.basePos, 
+			ease: 'power3.out',
+		});
+
+		this.planes.forEach( ( plane, i ) => {
+
+			if ( newIndexIsGreater ) {
+				if ( i_ToClose <= i && i < i_ToOpen) {
+
+					gsap.to(plane.obj.position, duration, {
+						x: plane.basePos - x, 
+						ease: 'power3.out',
+					});
+				}
+			}
+			else if ( !newIndexIsGreater ) {
+				if ( i_ToOpen < i && i <= i_ToClose) {
+					gsap.to(plane.obj.position, duration, {
+						x: plane.basePos + x, 
+						ease: 'power3.out',
+					});	
+				}
+			}
+
+		});
+
+		planeToClose.isOpen = false;
+		planeToOpen.isOpen = true;
+	}
 }

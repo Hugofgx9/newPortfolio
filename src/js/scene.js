@@ -8,7 +8,7 @@ import Stats from 'stats.js';
 import Interactions from './interaction';
 
 var stats = new Stats();
-stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild( stats.dom );
 
 export default class Scene {
@@ -53,17 +53,19 @@ export default class Scene {
 	initPlanes() {
 		this.planes = [];
 		this.planeGroup = new THREE.Group();
+		this.baseWidth = 60;
 
 		for (let i in Array(10).fill()) {
 			let loader = new THREE.TextureLoader();
 			let img = loader.load(hupsylonImg);
 
-			let geometry = new THREE.PlaneGeometry(50, 400, 100, 100);
+			let geometry = new THREE.PlaneGeometry( this.baseWidth, 400, 100, 100);
 			let material = new THREE.ShaderMaterial({
 				uniforms: {
 					u_time: { type: 'f', value: 0 },
 					u_offsetPos: { type: 'f', value: 0 },
 					u_scale: { type: 'vec2', value: new THREE.Vector2(1,1) },
+					u_skew: { type: 'vec2', value: new THREE.Vector2(0, 0.4)},
 					u_texture1: { type: 't', value: img },
 				},
 				vertexShader: vertexShader,
@@ -76,14 +78,15 @@ export default class Scene {
 			});
 			let plane = new THREE.Mesh(geometry, material);
 
-			let posX = i * 80
+			let margin = 20;
+			let posX = i * (this.baseWidth + margin);
 			plane.position.x = posX;
 
 			this.planes.push({obj: plane, isOpen: false, basePos: posX});
 			this.planeGroup.add(plane);
 		}
 		this.scene.add(this.planeGroup);
-		this.centerObject(this.planeGroup);
+		//this.centerObject(this.planeGroup);
 		this.scrollOffset = 0;
 	}
 
@@ -115,18 +118,6 @@ export default class Scene {
 		});
 	}
 
-	update() {
-		requestAnimationFrame(this.update.bind(this));
-		this.planes.forEach((plane, i) => {
-			//plane.material.uniforms.u_time.value = i * 0.5;
-			plane.obj.material.uniforms.u_time.value = this.clock.getElapsedTime() * 0.2 + i * 0.5;
-		});
-
-		stats.begin();
-
-		this.renderer.render(this.scene, this.camera);
-		stats.end();
-	}
 
 	onWheel(e) {
 		gsap.set(this.planeGroup.position, {
@@ -152,4 +143,16 @@ export default class Scene {
 		}
 	}
 
+	update() {
+		requestAnimationFrame(this.update.bind(this));
+		this.planes.forEach((plane, i) => {
+			//plane.material.uniforms.u_time.value = i * 0.5;
+			plane.obj.material.uniforms.u_time.value = this.clock.getElapsedTime() * 0.2 +  ( i * (Math.PI / 5) ) ;
+		});
+
+		stats.begin();
+
+		this.renderer.render(this.scene, this.camera);
+		stats.end();
+	}
 }
