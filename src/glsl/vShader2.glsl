@@ -17,7 +17,7 @@ void main() {
   float centerY = (.5 * (1. - cropY));
   v_uv = vec2(
     (uv.x * 0.2 * u_scale.x) + 0.4 ,
-    (uv.y * cropY * u_scale.y) + centerY + wave(1.5, 0.03, u_offsetPos)
+    (uv.y * cropY * u_scale.y) + centerY + wave(1.5, 0.04, u_offsetPos)
   );
 
   vec3 pos = position;

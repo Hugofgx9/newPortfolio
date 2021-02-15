@@ -41,7 +41,12 @@ export default class Scene {
 	}
 
 	initCamera() {
-		this.camera = new THREE.PerspectiveCamera(this.fov, window.innerWidth / window.innerHeight, 1, 1000);
+		this.camera = new THREE.PerspectiveCamera(
+			this.fov, 
+			window.innerWidth / window.innerHeight, 
+			1, 
+			200,
+		);
 		this.camera.position.set(0, 0, this.perspective);
 	}
 

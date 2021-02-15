@@ -1,0 +1,1 @@
+module.exports = "#define GLSLIFY 1\nvarying vec2 v_uv;\n\nuniform sampler2D u_texture1;\nuniform float u_time;\n\nvoid main() {\n\tvec4 texture1 = texture2D(u_texture1, v_uv );\n\n\tgl_FragColor = vec4(texture1.xyz, 1.0);\n}";

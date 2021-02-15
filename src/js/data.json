@@ -1,0 +1,41 @@
+{
+	"projects": [
+		{
+			"name": "The Square Project",
+			"img": "hupsylon.png",
+			"description": "",
+			"link": "",
+		},
+		{
+			"name": "Portfolio Louise",
+			"img": "hupsylon.png",
+			"description": "",
+			"link": "",
+		},
+		{
+			"name": "Glamora",
+			"img": "hupsylon.png",
+			"description": "",
+			"link": "",
+		},
+		{
+			"name": "Image Hover",
+			"img": "hupsylon.png",
+			"description": "",
+			"link": "",
+		},
+		{
+			"name": "3d Shoe",
+			"img": "hupsylon.png",
+			"description": "",
+			"link": "",
+		},
+		{
+			"name": "Makyma",
+			"img": "hupsylon.png",
+			"description": "",
+			"link": "",
+		},
+
+	]
+}

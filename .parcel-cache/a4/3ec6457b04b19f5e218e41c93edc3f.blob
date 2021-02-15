@@ -1,0 +1,88 @@
+* {
+  list-style: none;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background-color: transparent;
+}
+
+button:focus {
+  outline: 0;
+}
+
+body {
+  font-family: Helvetica;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #1C1C1C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+body #container {
+  display: grid;
+  grid-auto-flow: column;
+}
+body #container .item {
+  background: white;
+  height: 50vh;
+  width: 0vw;
+  margin-right: -1vw;
+}
+body canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+body .center {
+  display: none;
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  background: red;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+body .project {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  pointer-events: none;
+}
+body .project h2 {
+  grid-column: 3/8;
+  grid-row: 2;
+  font-size: 40px;
+  color: white;
+}
+body .project h2 [data-split=char] {
+  transform: translate3d(-100%, 0, 0);
+}
+/*# sourceMappingURL=style.45b9df98.css.map */

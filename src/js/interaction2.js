@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Interaction } from 'three.interaction';
 import gsap from 'gsap';
+import Content from './content';
 
 export default class Interact {
 	constructor(scene, sceneCtx, planes, planesCtx) {
@@ -10,7 +11,8 @@ export default class Interact {
 		this.planes = planes;
 		this.planesCtx = planesCtx
 		new Interaction(this.sceneCtx.renderer, this.scene, this.sceneCtx.camera);
-		this.openScale = 2;
+		this.openScale = 2.2;
+		this.Content = new Content;
 
 		this.bindEvents();
 
@@ -50,7 +52,7 @@ export default class Interact {
 
 		//20 is margin
 		let planeX = i * (this.planesCtx.baseWidth + 20);
-		let offset = this.planesCtx.baseWidth / 2;
+		let offset = this.planesCtx.baseWidth * (this.openScale - 1) / 2;
 
 		//center Group
 		gsap.to(this.planesCtx.planeGroup.position, 1, {
@@ -63,8 +65,11 @@ export default class Interact {
 			index: 0,
 			to: this.openScale,
 			ease: 'power3.out',
-			delay: duration,
-			onStart: () => this.moveOtherPlanes(i, offset),
+			//delay: 0.2,
+			onStart: () => {
+				this.moveOtherPlanes(i, offset),
+				this.Content.open();
+			}
 		})
 
 	}
@@ -80,6 +85,7 @@ export default class Interact {
 			index: 0,
 			to: 1,
 			ease: 'power3.out',
+			onStart: () => this.Content.close(),
 		})
 
 		this.moveOtherPlanes(i, 0);
@@ -106,7 +112,7 @@ export default class Interact {
 
 	openOtherPlane ( planeToOpen, planeToClose ) {
 
-		let x = this.planesCtx.baseWidth / 2;
+		let x = this.planesCtx.baseWidth * (this.openScale - 1) / 2;
 		let duration = 0.7;
 
 		let i_ToOpen = this.planes.indexOf( planeToOpen );
@@ -120,6 +126,7 @@ export default class Interact {
 		gsap.to(this.planesCtx.planeGroup.position, 1.5, {
 			x: - planeX,
 			ease: 'power2.inOut',
+			onStart: () => this.Content.closeOpen(),
 		});
 
 		//close plane
@@ -127,7 +134,7 @@ export default class Interact {
 			index: 0,
 			to: 1,
 			ease: 'power3.out',
-			delay: 0.7
+			delay: 0.7,
 		});
 
 		//open plane

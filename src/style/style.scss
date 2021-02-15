@@ -43,4 +43,29 @@ body{
 		transform: translate(-50%, -50%);
 		z-index: 20;
 	}
+
+	.project {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 10;
+		width: 100vw;
+		height: 100vh;
+		display: grid;
+		grid-template-columns: repeat(12, 1fr);
+		grid-template-rows: repeat(5, 1fr);
+		pointer-events: none;
+
+		h2 {
+			grid-column: 3/8;
+			grid-row: 2;
+			font-size: 40px;
+			color: white;
+
+			[data-split=char] {
+				transform: translate3d(-100%, 0, 0);
+			}
+		}
+
+	}
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="e7f71f9edbccbf5c977fdebbbb92c1de">
+	<title>new Portfolio</title>
+</head>
+<body>
+
+	<div id="container">
+		<div class="item"></div>
+		<div class="item"></div>
+		<div class="item"></div>
+		<div class="item"></div>
+		<div class="item"></div>
+		<div class="item"></div>
+		<div class="item"></div>
+	</div>
+	<div class="center"></div>
+
+	<div class="project">
+		<h2></h2>
+	</div>
+	<canvas>
+
+
+	<script src="dac1de8a67430ef257ac6b198c0f9a5f"></script>
+</canvas></body>
+</html>

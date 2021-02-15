@@ -3,14 +3,14 @@ import gsap from 'gsap';
 import Interactions from './interaction2';
 import vertexShader from '../glsl/vShader2.glsl';
 import fragmentShader from '../glsl/fShader.glsl';
-import hupsylonImg from '../img/hupsylon.png';
+import hupsylonImg from 'url:../img/hupsylon.png';
 
 export default class Planes {
 	constructor(scene, sceneCtx) {
 		this.scene = scene;
 		this.sceneCtx = sceneCtx;
 
-		this.baseWidth = 60;
+		this.baseWidth = 160;
 		this.margin = 20;
 		this.clock = this.sceneCtx.clock;
 
@@ -31,12 +31,14 @@ export default class Planes {
 			let delay = opts.delay || '';
 			let ease = opts.ease || '';
 			let onStart = opts.onStart || '';
+			let onComplete = opts.onComplete || '';
 
 			gsap.to(initValue, time, {
 				value: targetValue,
 				delay,
 				ease,
 				onStart,
+				onComplete,
 				onUpdate: () => {
 					this.matrix.elements[opts.index] = initValue.value;
 				},
@@ -50,12 +52,14 @@ export default class Planes {
 			let delay = opts.delay || '';
 			let ease = opts.ease || '';
 			let onStart = opts.onStart || '';
+			let onComplete = opts.onComplete || '';
 
 			gsap.to(initValue, time, {
 				value: targetValue,
 				delay,
 				ease,
 				onStart,
+				onComplete,
 				onUpdate: () => {
 					this.matrix.elements[opts.index] = initValue.value;
 				},
@@ -68,7 +72,7 @@ export default class Planes {
 		this.planes = [];
 		this.planeGroup = new THREE.Group();
 
-		for (let i in Array(10).fill()) {
+		for (let i in Array(5).fill()) {
 			let planeWrapper = new THREE.Group;
 			let loader = new THREE.TextureLoader();
 			let img = loader.load(hupsylonImg);

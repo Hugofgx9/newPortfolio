@@ -1,7 +1,37 @@
 import gsap from 'gsap';
-import Scene from './scene.js';
+import Scene from './scene';
 
 new Scene;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // let angle = 12;
 
