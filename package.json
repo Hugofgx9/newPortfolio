@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "gsap": "^3.6.0",
+    "planes": "^0.0.8",
     "stats.js": "^0.17.0",
     "three": "^0.125.1",
     "three.interaction": "^0.2.3"

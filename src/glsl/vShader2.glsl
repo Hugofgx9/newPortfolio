@@ -22,24 +22,6 @@ void main() {
 
   vec3 pos = position;
 
-  //vec2 skew = u_skew;
-  vec2 skew = vec2(0.,0.);
-
-  //better performance this in js ?
-  mat3 trans = mat3(
-    u_scale.x   ,tan(skew.x) ,0.0,
-    tan(skew.y) ,1.0         ,0.0,
-    0.0         ,0.03        ,1.0
-  );
-
-  //skew it
-  pos.xy = (trans * (vec3(pos.xy, 0.0))).xy;
-
-  float displ = wave(1.5, 30. , u_offsetPos);
-  pos.y += displ;
-  pos.x += displ * tan(skew.y);
-
-
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 
