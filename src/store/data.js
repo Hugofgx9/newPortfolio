@@ -1,13 +1,16 @@
-import hupsylonImg from 'url:../img/hupsylon.png';
-import glamoraImg from 'url:../img/Glamora.png';
+import shoe3dImg from 'url:../img/3dShoe.png';
 import louisePortfolioImg from 'url:../img/louisePortfolio.png';
+import jeanGorinImg from 'url:../img/jeanGorin.png';
+import glamoraImg from 'url:../img/glamora.png';
+import hlmlImg from 'url:../img/hlml.png';
+import makymaImg from 'url:../img/makyma.png';
 
 
 const data = {
 	projects: [
 		{
-			name: 'The Square Project',
-			img: glamoraImg,
+			name: '3d Shoe',
+			img: shoe3dImg,
 			description: '',
 			link: '',
 		},
@@ -18,26 +21,26 @@ const data = {
 			link: '',
 		},
 		{
+			name: 'The Square Project',
+			img: jeanGorinImg,
+			description: '',
+			link: '',
+		},
+		{
 			name: 'Glamora',
 			img: glamoraImg,
 			description: '',
 			link: '',
 		},
 		{
-			name: 'Image Hover',
-			img: glamoraImg,
-			description: '',
-			link: '',
-		},
-		{
-			name: '3d Shoe',
-			img: glamoraImg,
+			name: 'Hard Love Motor Love',
+			img: hlmlImg,
 			description: '',
 			link: '',
 		},
 		{
 			name: 'Makyma',
-			img: glamoraImg,
+			img: makymaImg,
 			description: '',
 			link: '',
 		},
