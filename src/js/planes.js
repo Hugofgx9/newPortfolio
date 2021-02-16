@@ -3,8 +3,7 @@ import gsap from 'gsap';
 import Interactions from './interaction2';
 import vertexShader from '../glsl/vShader2.glsl';
 import fragmentShader from '../glsl/fShader.glsl';
-import hupsylonImg from 'url:../img/hupsylon.png';
-import data from '../store/data.json';
+import data from '../store/data';
 
 export default class Planes {
 	constructor(scene, sceneCtx) {
@@ -12,6 +11,7 @@ export default class Planes {
 		this.sceneCtx = sceneCtx;
 
 		this.baseWidth = 160;
+		this.baseHeight = this.baseWidth * 10 / 16 * 3.5;
 		this.margin = 20;
 		this.clock = this.sceneCtx.clock;
 
@@ -75,17 +75,22 @@ export default class Planes {
 
 		for (let i in data.projects) {
 			let planeWrapper = new THREE.Group;
-			let loader = new THREE.TextureLoader();
-			let img = loader.load(hupsylonImg);
 
-			let geometry = new THREE.PlaneGeometry( this.baseWidth, 400, 100, 100);
+			// const loaderIMG = new THREE.ImageLoader();
+			// let img = loaderIMG.load();
+
+			let loader = new THREE.TextureLoader();
+			let text = loader.load(data.projects[i].img);
+
+			let geometry = new THREE.PlaneGeometry( this.baseWidth, this.baseHeight, 100, 100);
 			let material = new THREE.ShaderMaterial({
 				uniforms: {
 					u_time: { type: 'f', value: 0 },
 					u_offsetPos: { type: 'f', value: 0 },
 					u_scale: { type: 'vec2', value: new THREE.Vector2(1,1) },
-					u_skew: { type: 'vec2', value: new THREE.Vector2(0,0) },
-					u_texture1: { type: 't', value: img },
+					u_skew: { type: 'f', value: 1 },
+					u_planeRatio: { type: 'f', value: this.baseWidth / this.baseHeight},
+					u_texture1: { type: 't', value: text },
 				},
 				vertexShader: vertexShader,
 				fragmentShader: fragmentShader,

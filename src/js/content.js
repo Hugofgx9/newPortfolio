@@ -1,6 +1,6 @@
 import splitText from './utils/splitText';
 import gsap from 'gsap';
-import data from '../store/data.json';
+import data from '../store/data';
 
 export default class Content {
 	constructor () {
@@ -42,7 +42,6 @@ export default class Content {
 			// },
 			onComplete: () => {
 				this.splitH2.getElement().innerHTML = '';
-				this.$h2 = document.querySelector('.project h2');
 			}
 		});
 	}
@@ -58,7 +57,6 @@ export default class Content {
 			// },
 			onComplete: () => {
 				this.splitH2.getElement().innerHTML = '';
-				this.$h2 = document.querySelector('.project h2');
 				this.open(i);
 			}
 		});

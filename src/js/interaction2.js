@@ -11,7 +11,8 @@ export default class Interact {
 		this.planes = planes;
 		this.planesCtx = planesCtx
 		new Interaction(this.sceneCtx.renderer, this.scene, this.sceneCtx.camera);
-		this.openScale = 2.2;
+		//change scale in planes.js this.baseHeight
+		this.openScale = 3.5;
 		this.Content = new Content;
 
 		this.bindEvents();
@@ -60,14 +61,22 @@ export default class Interact {
 			ease: 'power2.inOut',
 		});
 
+		//shader scale
+		gsap.to(plane.mesh.material.uniforms.u_scale.value, duration * 2., {
+			x: this.openScale,
+			ease: 'power3.out',
+			delay: 0.2,
+		});
+
 		// scale plane
 		plane.wrapper.gsapMatrix(duration * 1.2, {
 			index: 0,
 			to: this.openScale,
 			ease: 'power3.out',
-			//delay: 0.2,
+			delay: 0.2,
 			onStart: () => {
-				this.moveOtherPlanes(i, offset),
+				this.moveOtherPlanes(i, offset);
+				this.skewAll(0);
 				this.Content.open(i);
 			}
 		})
@@ -80,15 +89,26 @@ export default class Interact {
 		let i = this.planes.indexOf(plane);
 		plane.isOpen = false;
 
+		gsap.to(plane.mesh.material.uniforms.u_scale.value, duration * 1.2, {
+			x: 1,
+			ease: 'power3.out',
+			delay: 0.2,
+		});
 
 		plane.wrapper.gsapMatrix(duration * 1.2, {
 			index: 0,
 			to: 1,
 			ease: 'power3.out',
-			onStart: () => this.Content.close(),
+			delay: 0.2,
+			onStart: () => {
+				this.Content.close(),
+				this.moveOtherPlanes(i, 0);
+				this.skewAll(1);
+			},
+			onComplete: () => {
+			}
 		})
 
-		this.moveOtherPlanes(i, 0);
 	}
 
 	moveOtherPlanes( index, x) {
@@ -126,7 +146,9 @@ export default class Interact {
 		gsap.to(this.planesCtx.planeGroup.position, 1.5, {
 			x: - planeX,
 			ease: 'power2.inOut',
-			onStart: () => this.Content.closeOpen(i_ToOpen),
+			onStart: () => {
+				this.Content.closeOpen(i_ToOpen);
+			}
 		});
 
 		//close plane
@@ -137,10 +159,22 @@ export default class Interact {
 			delay: 0.7,
 		});
 
+		gsap.to(planeToClose.mesh.material.uniforms.u_scale.value, duration * 1.2, {
+			x: 1,
+			ease: 'power3.out',
+			delay: 0.7,
+		});
+
 		//open plane
 		planeToOpen.wrapper.gsapMatrix(duration * 1.2, {
 			index: 0,
 			to: this.openScale,
+			ease: 'power3.out',
+			delay: 0.7,
+		});
+
+		gsap.to(planeToOpen.mesh.material.uniforms.u_scale.value, duration * 2., {
+			x: this.openScale,
 			ease: 'power3.out',
 			delay: 0.7,
 		});
@@ -158,7 +192,7 @@ export default class Interact {
 			if ( newIndexIsGreater ) {
 				if ( i_ToClose <= i && i < i_ToOpen) {
 
-					plane.wrapper.gsapMatrix( duration * 1.2, {
+					plane.wrapper.gsapMatrix( duration * 1.1, {
 						index: 12,
 						to: plane.basePos - x, 
 						ease: 'power3.out',
@@ -168,7 +202,7 @@ export default class Interact {
 			}
 			else if ( !newIndexIsGreater ) {
 				if ( i_ToOpen < i && i <= i_ToClose) {
-					plane.wrapper.gsapMatrix( duration * 1.2, {
+					plane.wrapper.gsapMatrix( duration * 1.1, {
 						index: 12,
 						to: plane.basePos + x, 
 						ease: 'power3.out',
@@ -181,5 +215,20 @@ export default class Interact {
 
 		planeToClose.isOpen = false;
 		planeToOpen.isOpen = true;
+	}
+
+	skewAll( amount, time ) {
+		time = time || 0.8;
+		this.planes.forEach( plane => {
+			plane.wrapper.gsapMatrix(time, {
+				index: 4,
+				to: Math.tan( amount * 0.4 ),
+				ease: 'power2.out',
+			});
+			gsap.to(plane.mesh.material.uniforms.u_skew, time, {
+				value: amount,
+				ease: 'power2.out',
+			})
+		});
 	}
 }
