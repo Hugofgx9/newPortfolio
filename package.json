@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "^7.18.0",
+    "glslify-bundle": "^5.1.1",
     "sass": "^1.32.5"
   },
   "dependencies": {
