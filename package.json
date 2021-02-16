@@ -17,6 +17,7 @@
   "dependencies": {
     "@parcel/config-default": "^2.0.0-beta.1",
     "@parcel/transformer-glsl": "^2.0.0-nightly.2048",
+    "glslify-deps": "^1.3.2",
     "gsap": "^3.6.0",
     "parcel": "next",
     "planes": "^0.0.8",
