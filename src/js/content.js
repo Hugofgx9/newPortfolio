@@ -1,5 +1,6 @@
 import splitText from './utils/splitText';
 import gsap from 'gsap';
+import data from '../store/data.json';
 
 export default class Content {
 	constructor () {
@@ -7,11 +8,13 @@ export default class Content {
 			force3D: false,
 		});
 
+		this.projects = data.projects;
+
 	}
 
-	open() {
+	open(i) {
 		this.$h2 = document.querySelector('.project h2');
-		this.$h2.textContent = 'The Square Project';
+		this.$h2.textContent = data.projects[i].name;
 
 		this.splitH2 = new splitText({
 			target: '.project h2',
@@ -44,7 +47,7 @@ export default class Content {
 		});
 	}
 
-	closeOpen(){
+	closeOpen(i){
 
 		//close
 		gsap.to(this.splitH2.getChars(), 1, {
@@ -56,7 +59,7 @@ export default class Content {
 			onComplete: () => {
 				this.splitH2.getElement().innerHTML = '';
 				this.$h2 = document.querySelector('.project h2');
-				this.open();
+				this.open(i);
 			}
 		});
 

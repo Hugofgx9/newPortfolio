@@ -4,6 +4,7 @@ import Interactions from './interaction2';
 import vertexShader from '../glsl/vShader2.glsl';
 import fragmentShader from '../glsl/fShader.glsl';
 import hupsylonImg from 'url:../img/hupsylon.png';
+import data from '../store/data.json';
 
 export default class Planes {
 	constructor(scene, sceneCtx) {
@@ -72,7 +73,7 @@ export default class Planes {
 		this.planes = [];
 		this.planeGroup = new THREE.Group();
 
-		for (let i in Array(5).fill()) {
+		for (let i in data.projects) {
 			let planeWrapper = new THREE.Group;
 			let loader = new THREE.TextureLoader();
 			let img = loader.load(hupsylonImg);

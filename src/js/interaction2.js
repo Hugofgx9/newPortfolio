@@ -68,7 +68,7 @@ export default class Interact {
 			//delay: 0.2,
 			onStart: () => {
 				this.moveOtherPlanes(i, offset),
-				this.Content.open();
+				this.Content.open(i);
 			}
 		})
 
@@ -126,7 +126,7 @@ export default class Interact {
 		gsap.to(this.planesCtx.planeGroup.position, 1.5, {
 			x: - planeX,
 			ease: 'power2.inOut',
-			onStart: () => this.Content.closeOpen(),
+			onStart: () => this.Content.closeOpen(i_ToOpen),
 		});
 
 		//close plane
