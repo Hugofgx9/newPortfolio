@@ -14,11 +14,12 @@ export default class Planes {
 		this.baseHeight = this.baseWidth * 10 / 16 * 3.5;
 		this.margin = 20;
 		this.clock = this.sceneCtx.clock;
+		this.canWheel = true;
 
 		this.initMethods();
 		this.createPlanes();
 
-		new Interactions(this.scene, this.sceneCtx, this.planes, this);
+		this.interactions = new Interactions(this.scene, this.sceneCtx, this.planes, this);
 
 	}
 
@@ -90,6 +91,8 @@ export default class Planes {
 					u_scale: { type: 'vec2', value: new THREE.Vector2(1,1) },
 					u_skew: { type: 'f', value: 1 },
 					u_planeRatio: { type: 'f', value: this.baseWidth / this.baseHeight},
+					u_tint: {type: 'f', value: data.projects[i].color},
+					u_tintAmount: {type: 'f', value: 1},
 					u_texture1: { type: 't', value: text },
 				},
 				vertexShader: vertexShader,
@@ -112,6 +115,7 @@ export default class Planes {
 				isOpen: false, 
 				basePos: posX,
 				offset: 0,
+				color: data.projects[i].color,
 			});
 			this.planeGroup.add(planeWrapper);
 
@@ -136,22 +140,46 @@ export default class Planes {
 	}
 
 	onWheel(e) {
-		gsap.to(this.planeGroup.position, 0.5, {
-			x: '+=' + e.deltaY * 0.33,
-			ease: 'power2.out',
-		});
-		this.scrollOffset += (e.deltaY * 0.0006);
-		this.planes.forEach( plane => {
-			gsap.to(plane.mesh.material.uniforms.u_offsetPos, 0.5, {
-				value: this.scrollOffset.toFixed(2),
-				ease: 'power2.out',
-			})
-			gsap.to(plane, 0.5, {
-				offset: this.scrollOffset.toFixed(2),
-				ease: 'power2.out',
-			})
-			//plane.material.uniforms.u_offsetPos.value = this.offset.toFixed(2);
-		})
+
+		if (this.canWheel == true ) {
+			let allPlanesAreClosed = this.planes.every(plane => plane.isOpen == false);
+
+			if (allPlanesAreClosed) {
+
+				gsap.to(this.planeGroup.position, 0.5, {
+					x: '+=' + e.deltaY * 0.33,
+					ease: 'power2.out',
+				});
+
+				this.scrollOffset += (e.deltaY * 0.0006);
+				this.planes.forEach( plane => {
+					gsap.to(plane.mesh.material.uniforms.u_offsetPos, 0.5, {
+						value: this.scrollOffset.toFixed(2),
+						ease: 'power2.out',
+					})
+					gsap.to(plane, 0.5, {
+						offset: this.scrollOffset.toFixed(2),
+						ease: 'power2.out',
+					})
+					//plane.material.uniforms.u_offsetPos.value = this.offset.toFixed(2);
+				})
+			}
+			else {
+				let openIndex = this.planes.findIndex( plane => plane.isOpen == true);
+
+				if (e.deltaY > 0) {
+					this.canWheel = false;
+					this.interactions.swipeToOtherPlane(this.planes[openIndex - 1], this.planes[openIndex], 0.7);
+				}
+				else if (e.deltaY < 0) {
+					this.canWheel = false;
+					this.interactions.swipeToOtherPlane(this.planes[openIndex + 1], this.planes[openIndex], 0.7);
+				}
+			}
+
+		}
+
+
 	}
 
 	update() {

@@ -5,15 +5,26 @@ uniform float u_time;
 uniform float u_offsetPos;
 uniform vec2 u_scale;
 uniform float u_skew;
+uniform float u_tint;
+uniform float u_tintAmount;
 uniform float u_planeRatio;
 
 float wave (float speed, float amp, float offset) {
-  return cos((u_time + offset) * speed) * amp;
+	return cos((u_time + offset) * speed) * amp;
+}
+
+vec3 hsv2rgb(vec3 c) {
+	vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+	vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+	return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
 void main() {
-	vec2 newUV = v_uv;
 
+
+	/* RATIO SCALE AND SKEW */
+
+	vec2 newUV = v_uv;
 	float texRatio = 16. / 10.;
 
 	// fit y
@@ -25,20 +36,27 @@ void main() {
 	//center x
 	newUV.x += (.5 * (1. - (u_planeRatio * u_scale.x / texRatio) )) ;
 	
-
 	// unskew;
 	float skewFactor = 0.265;
 	newUV.x += newUV.y * 0.265 * u_skew;
 
 	//wave y
+	//offset is for scroll
 	newUV = newUV * 0.98 + 0.01;
 	newUV.y += wave(1.5, 0.01, u_offsetPos);
 
+	vec4 image = texture2D(u_texture1, newUV );
 
 
+	/* GREY/COLOR */
+
+	float grey = 0.21 * image.r + 0.49 * image.g + 0.30 * image.b;
+	float tint = u_tint;
+	vec3 color = hsv2rgb( vec3(tint, u_tintAmount , 1.0));
 
 
-	vec4 texture1 = texture2D(u_texture1, newUV );
+	image.rgb = image.rgb * (1. - u_tintAmount) + vec3(grey) * u_tintAmount;
 
-	gl_FragColor = vec4(texture1.rgb, 1.0);
+
+	gl_FragColor = vec4(image.rgb * color, 1.0);
 }
