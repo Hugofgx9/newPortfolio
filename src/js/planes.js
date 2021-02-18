@@ -92,6 +92,8 @@ export default class Planes {
 					u_skew: { type: 'f', value: 1 },
 					u_planeRatio: { type: 'f', value: this.baseWidth / this.baseHeight},
 					u_tint: {type: 'f', value: data.projects[i].color},
+					u_tint2: {type: 'f', value: data.projects[i].color},
+					u_tintTransfert: {type: 'f', value: 0},
 					u_tintAmount: {type: 'f', value: 1},
 					u_texture1: { type: 't', value: text },
 				},

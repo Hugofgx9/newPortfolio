@@ -6,6 +6,8 @@ uniform float u_offsetPos;
 uniform vec2 u_scale;
 uniform float u_skew;
 uniform float u_tint;
+uniform float u_tint2;
+uniform float u_tintTransfert;
 uniform float u_tintAmount;
 uniform float u_planeRatio;
 
@@ -51,12 +53,21 @@ void main() {
 	/* GREY/COLOR */
 
 	float grey = 0.21 * image.r + 0.49 * image.g + 0.30 * image.b;
-	float tint = u_tint;
-	vec3 color = hsv2rgb( vec3(tint, u_tintAmount , 1.0));
+	vec3 color = hsv2rgb( vec3(
+		u_tint, 
+		u_tintAmount * (1. - u_tintTransfert), 
+		1.0
+	));
+
+	vec3 color2 = hsv2rgb( vec3(
+		u_tint2, 
+		u_tintAmount * (u_tintTransfert), 
+		1.0
+	));
 
 
 	image.rgb = image.rgb * (1. - u_tintAmount) + vec3(grey) * u_tintAmount;
 
 
-	gl_FragColor = vec4(image.rgb * color, 1.0);
+	gl_FragColor = vec4(image.rgb * color * color2, 1.0);
 }
