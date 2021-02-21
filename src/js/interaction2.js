@@ -114,7 +114,7 @@ export default class Interact {
 			ease: 'power3.out',
 			onStart: () => {
 				this.colorOtherPlanes(i);
-				this.changeColor(plane.mesh, plane.color, duration * 2)
+				this.changeColor(plane, plane.color, duration * 2)
 			}
 		}, '<');
 
@@ -139,7 +139,7 @@ export default class Interact {
 		this.planes.forEach( ( plane, i ) => {
 			if (i !== index) {
 
-				this.changeColor(plane.mesh, color || plane.color, undefined || duration);
+				this.changeColor(plane, color || plane.color, undefined || duration);
 
 			}
 		});
@@ -395,12 +395,20 @@ export default class Interact {
 		});
 	}
 
-	changeColor(mesh, color, duration) {
+	changeColor(plane, color, duration) {
 
-		let uniforms = mesh.material.uniforms;
+		let uniforms = plane.mesh.material.uniforms;
+		
+		//if previous timeline hasn't ending
+		if (plane.colorTimeline && plane.colorTimeline.isActive() ) {
+			plane.colorTimeline.kill();
+
+			uniforms.u_tint.value = uniforms.u_tint2.value;
+			uniforms.u_tintTransfert.value = 0;
+		} 
+
 		let tl = gsap.timeline();
-
-		console.log(uniforms);
+		plane.colorTimeline = tl;
 
 		tl.set(uniforms.u_tint2, {
 			value: color,

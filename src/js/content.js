@@ -9,12 +9,17 @@ export default class Content {
 		});
 
 		this.projects = data.projects;
+		this.currentTl = null;
 
 	}
 
 	open(i) {
 		this.$h2 = document.querySelector('.project h2');
 		this.$h2.textContent = data.projects[i].name;
+
+		if (this.currentTl) this.currentTl.kill();
+		let tl = gsap.timeline();
+		this.currentTl = tl;
 
 		this.splitH2 = new splitText({
 			target: '.project h2',
@@ -23,7 +28,7 @@ export default class Content {
 		});
 
 
-		gsap.to(this.splitH2.getChars(), 1, {
+		tl.to(this.splitH2.getChars(), 1, {
 			x: 0,
 			ease: "power3.easeOut",
 			// stagger: {
@@ -34,7 +39,12 @@ export default class Content {
 	}
 
 	close() {
-		gsap.to(this.splitH2.getChars(), 1, {
+		
+		if (this.currentTl) this.currentTl.kill();
+		let tl = gsap.timeline();
+		this.currentTl = tl;
+
+		tl.to(this.splitH2.getChars(), 1, {
 			x: '110%',
 			ease: "power3.easeOut",
 			// stagger: {
@@ -48,8 +58,13 @@ export default class Content {
 
 	closeOpen(i){
 
+		if (this.currentTl) this.currentTl.kill();
+
+		let tl = gsap.timeline();
+		this.currentTl = tl;
+
 		//close
-		gsap.to(this.splitH2.getChars(), 1, {
+		tl.to(this.splitH2.getChars(), 1, {
 			x: '110%',
 			ease: "power3.easeOut",
 			// stagger: {
