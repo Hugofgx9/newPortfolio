@@ -7,50 +7,50 @@ import makymaImg from 'url:../img/makyma.png';
 
 
 const data = {
-	projects: [
-		{
-			name: '3d Shoe',
-			img: shoe3dImg,
-			description: '',
-			link: '',
-			color: 0.05,
-		},
-		{
-			name: 'Portfolio Louise',
-			img: louisePortfolioImg,
-			description: '',
-			link: '',
-			color: 0.45,
-		},
-		{
-			name: 'The Square Project',
-			img: jeanGorinImg,
-			description: '',
-			link: '',
-			color: 0.60,
-		},
-		{
-			name: 'Glamora',
-			img: glamoraImg,
-			description: '',
-			link: '',
-			color: 0.75,
-		},
-		{
-			name: 'Hard Love Motor Love',
-			img: hlmlImg,
-			description: '',
-			link: '',
-			color: 0.80,
-		},
-		{
-			name: 'Makyma',
-			img: makymaImg,
-			description: '',
-			link: '',
-			color: 1.0,
-		},
-	],
+  projects: [
+    {
+      name: '3d Shoe',
+      img: shoe3dImg,
+      description: '',
+      link: 'https://3dshoe.netlify.app/',
+      color: 0.05,
+    },
+    {
+      name: 'Portfolio Louise',
+      img: louisePortfolioImg,
+      description: 'https://www.louisefantozzi.com/',
+      link: '',
+      color: 0.45,
+    },
+    {
+      name: 'The Square Project',
+      img: jeanGorinImg,
+      description: 'https://thesquareproject.netlify.app/',
+      link: '',
+      color: 0.6,
+    },
+    {
+      name: 'Glamora',
+      img: glamoraImg,
+      description: 'https://glamoravue.hugofaugeroux.com/',
+      link: '',
+      color: 0.75,
+    },
+    {
+      name: 'Hard Love Motor Love',
+      img: hlmlImg,
+      description: '',
+      link: 'http://www.hardlovemotorlove.fr/',
+      color: 0.8,
+    },
+    {
+      name: 'Makyma',
+      img: makymaImg,
+      description: '',
+      link: 'https://www.makyma.org/',
+      color: 1.0,
+    },
+  ],
 };
 
 export default data;

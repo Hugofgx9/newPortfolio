@@ -70,11 +70,11 @@ export default class Scene {
 	}
 
 	onMouseMove(event) {
-		gsap.to(this.mouse, 0.5, {
-			x: event.clientX,
-			y: event.clientY,
-			//x: ( event.clientX / window.innerWidth ) * 2 - 1,
-			//y: ( event.clientY / window.innerHeight ) * 2 + 1,
+		gsap.set(this.mouse, {
+			//x: event.clientX,
+			//y: event.clientY,
+			x: ( event.clientX / window.innerWidth ) * 2 - 1,
+			y: -( event.clientY / window.innerHeight ) * 2 + 1,
 		});
 	}
 
