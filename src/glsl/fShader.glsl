@@ -9,6 +9,7 @@ uniform float u_tint;
 uniform float u_tint2;
 uniform float u_tintTransfert;
 uniform float u_tintAmount;
+uniform float u_greyAmount;
 uniform float u_planeRatio;
 
 float wave (float speed, float amp, float offset) {
@@ -67,6 +68,7 @@ void main() {
 
 
 	image.rgb = image.rgb * (1. - u_tintAmount) + vec3(grey) * u_tintAmount;
+	image.rgb = image.rgb * (1. - u_greyAmount) + vec3(grey) * u_greyAmount;
 
 
 	gl_FragColor = vec4(image.rgb * color * color2, 1.0);

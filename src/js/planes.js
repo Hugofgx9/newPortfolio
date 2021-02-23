@@ -16,20 +16,20 @@ export default class Planes {
     this.margin = 20;
     this.clock = this.sceneCtx.clock;
     this.canWheel = true;
-		this.openScale = 3.5;
+    this.openScale = 3.5;
+    this.wavyAmount = { value: 0 };
 
-		
     this.initMethods();
     this.createPlanes();
-		
+
     this.interactions = new Interactions(
-			this.scene,
+      this.scene,
       this.sceneCtx,
       this.planes,
       this
-			);
-		this.Content = new Content();
-	}
+    );
+    this.Content = new Content();
+  }
 
   initMethods() {
     // make simple
@@ -80,7 +80,7 @@ export default class Planes {
   createPlanes() {
     this.planes = [];
     this.planeGroup = new THREE.Group();
-    this.planeGroup.name = "mesh-group";
+    this.planeGroup.name = 'mesh-group';
 
     for (let i in data.projects) {
       let planeWrapper = new THREE.Group();
@@ -97,6 +97,7 @@ export default class Planes {
         100,
         100
       );
+
       let material = new THREE.ShaderMaterial({
         uniforms: {
           u_time: { type: 'f', value: 0 },
@@ -107,25 +108,36 @@ export default class Planes {
           u_tint: { type: 'f', value: data.projects[i].color },
           u_tint2: { type: 'f', value: data.projects[i].color },
           u_tintTransfert: { type: 'f', value: 0 },
-          u_tintAmount: { type: 'f', value: 1 },
+          u_tintAmount: { type: 'f', value: 0 },
+          u_greyAmount: { type: 'f', value: 1 },
           u_texture1: { type: 't', value: text },
         },
+
         vertexShader: vertexShader,
+
         fragmentShader: fragmentShader,
+
         defines: {
           // tofixed(1) tronque le nombre avec 1 nombre après la virgule
           PR: window.devicePixelRatio.toFixed(1),
         },
+
         side: THREE.DoubleSide,
       });
 
       let plane = new THREE.Mesh(geometry, material);
+      planeWrapper.add(plane);
+      this.planeGroup.add(planeWrapper);
+
+      //enable matrix transfo
+      plane.matrixAutoUpdate = false;
+      planeWrapper.matrixAutoUpdate = false;
+
       plane.name = `mesh-${i}`;
       planeWrapper.name = `mesh-wrapper-${i}`;
 
       let posX = i * (this.baseWidth + this.margin);
 
-      planeWrapper.add(plane);
       this.planes.push({
         mesh: plane,
         wrapper: planeWrapper,
@@ -135,23 +147,16 @@ export default class Planes {
         color: data.projects[i].color,
         link: data.projects[i].link,
       });
-      this.planeGroup.add(planeWrapper);
 
-      plane.matrixAutoUpdate = false;
-      planeWrapper.matrixAutoUpdate = false;
-
-      //skewX
-      planeWrapper.gsapMatrix(2, {
-        index: 4,
-        to: Math.tan(0.4),
-      });
-      //translateX
+      //scaleX
       planeWrapper.gsapMatrix(0, {
-        index: 12,
-        to: posX,
+        index: 0,
+        to: 0.01,
       });
     }
+
     this.scene.add(this.planeGroup);
+    this.introAnim();
     //this.centerObject(this.planeGroup);
     this.scrollOffset = 0;
   }
@@ -221,7 +226,12 @@ export default class Planes {
     this.planes.forEach((plane, i) => {
       //plane.material.uniforms.u_time.value = i * 0.5;
       let time = this.clock.getElapsedTime() * 0.2 + i * (Math.PI / 5);
-      let wavyValue = this.wavy(time, 1.5, 30, plane.offset);
+      let wavyValue = this.wavy(
+        time,
+        1.5,
+        30 * this.wavyAmount.value,
+        plane.offset
+      );
       //translateY
       plane.mesh.matrix.elements[13] = wavyValue;
       //translateX trigo
@@ -239,6 +249,100 @@ export default class Planes {
    *  ACTIONS
    *
    */
+
+  introAnim() {
+    let tl = gsap.timeline();
+
+    this.planes.forEach(plane => {
+
+      // first scale
+      tl.add(() => {
+        plane.wrapper.gsapMatrix(1, {
+          index: 0,
+          to: 0.1,
+          ease: 'power3.inOut',
+        });
+      }, 1);
+
+			tl.to(plane.mesh.material.uniforms.u_scale.value , {
+				x: 0.1,
+				ease: 'power3.inOut',
+				duration: 0.8
+			},'<');
+			
+			
+      //skewX
+      tl.add(() => {
+				plane.wrapper.gsapMatrix(0.5, {
+					index: 4,
+          to: Math.tan(0.4),
+          ease: 'power2.inOut',
+        });
+      }, '<.4');
+			
+      //translateX
+      tl.add(() => {
+				plane.wrapper.gsapMatrix(2, {
+					index: 12,
+          to: plane.basePos,
+          ease: 'power3.inOut',
+        });
+      }, '<.5');
+			
+      //scale up
+      tl.add(() => {
+				plane.wrapper.gsapMatrix(1, {
+					index: 0,
+          to: 1,
+          ease: 'power3.inOut',
+        });
+      }, '<');
+			tl.to(plane.mesh.material.uniforms.u_scale.value , {
+				x: 1,
+				ease: 'power3.inOut',
+				duration: 1
+			},'<');
+			
+      tl.to(
+				plane.mesh.material.uniforms.u_greyAmount,
+        {
+					duration: 1.5,
+          value: 0,
+          ease: 'power2.inOut',
+        },
+        '<0.5'
+				);
+				
+      tl.to(
+        plane.mesh.material.uniforms.u_tintAmount,
+        {
+          duration: 1.5,
+          value: 1,
+          ease: 'power2.inOut',
+        },
+        '<'
+      );
+
+      tl.to(
+        plane.mesh.material.uniforms.u_tintAmount,
+        {
+          duration: 1.5,
+          value: 1,
+          ease: 'power2.inOut',
+        },
+        '<'
+      );
+    });
+    tl.to(
+      this.wavyAmount,
+      {
+        value: 1,
+        duration: 7,
+        ease: 'power2.inOut',
+      },
+      '>-1'
+    );
+  }
 
   openPlane(plane) {
     let duration = 0.7;
@@ -258,15 +362,10 @@ export default class Planes {
     });
 
     //shader scale
-    tl.to(
-      plane.mesh.material.uniforms.u_scale.value,
-      duration * 2,
-      {
-        x: this.openScale,
-        ease: 'power3.out',
-      },
-      0.2
-    );
+    tl.to( plane.mesh.material.uniforms.u_scale.value, duration * 2, {
+      x: this.openScale,
+      ease: 'power3.out',
+    }, 0.2);
 
     // scale plane
     tl.add(
@@ -352,7 +451,11 @@ export default class Planes {
   colorOtherPlanes(index, color, duration) {
     this.planes.forEach((plane, i) => {
       if (i !== index) {
-        this.changePlaneColor(plane, color || plane.color, undefined || duration);
+        this.changePlaneColor(
+          plane,
+          color || plane.color,
+          undefined || duration
+        );
       }
     });
   }
@@ -527,12 +630,9 @@ export default class Planes {
       //onComplete: () => this.planesCtx.canWheel = true
     });
 
-    tl.add(
-			() => {
-				this.canWheel = true;
-      },
-      1.2
-    );
+    tl.add(() => {
+      this.canWheel = true;
+    }, 1.2);
 
     //close plane
     tl.add(
