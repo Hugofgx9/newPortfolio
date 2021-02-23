@@ -18,22 +18,22 @@ const data = {
     {
       name: 'Portfolio Louise',
       img: louisePortfolioImg,
-      description: 'https://www.louisefantozzi.com/',
-      link: '',
+      description: '',
+      link: 'https://www.louisefantozzi.com/',
       color: 0.45,
     },
     {
       name: 'The Square Project',
       img: jeanGorinImg,
-      description: 'https://thesquareproject.netlify.app/',
-      link: '',
+      description: '',
+      link: 'https://thesquareproject.netlify.app/',
       color: 0.6,
     },
     {
       name: 'Glamora',
       img: glamoraImg,
-      description: 'https://glamoravue.hugofaugeroux.com/',
-      link: '',
+      description: '',
+      link: 'https://glamoravue.hugofaugeroux.com/',
       color: 0.75,
     },
     {
