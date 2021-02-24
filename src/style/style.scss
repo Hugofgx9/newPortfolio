@@ -56,16 +56,42 @@ body{
 		grid-template-rows: repeat(10, 1fr);
 		pointer-events: none;
 
-		h2 {
-			grid-column: 3/8;
+		.title {
+			grid-column: 3/10;
 			grid-row: 2 ;
 			font-size: 40px;
 			color: grey;
+			//display: inline-block;
+			
+			h2{
+				display: inline;
+				vertical-align: middle;
+				
+				[data-split=char] {
+					transform: translate3d(-100%, 0, 0);
+					vertical-align: baseline;
 
-			[data-split=char] {
-				transform: translate3d(-100%, 0, 0);
+				}
+			}
+			
+			span{
+				vertical-align: baseline;
+				font-weight: 100;
+				font-size: 0.4em;
+				
+				[data-split=line-wrapper] {
+					display: inline-block !important;
+					vertical-align: middle;
+				}
+				
+				[data-split=line] {
+					transform: translate3d(0, 100%, 0);
+					opacity: 0;
+					vertical-align: baseline;
+					position: relative;
+					bottom: -3px;
+				}
 			}
 		}
-
 	}
 }
