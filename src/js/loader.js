@@ -43,8 +43,18 @@ export default class Loader {
 	}
 	
 	close() {
-		this.$loader.style.display = 'none';
-		this.$loader.remove();
-		this.sceneCtx.Planes.introAnim();
+
+		let tl = gsap.timeline();
+
+		
+		tl.to(this.$loader, 1, {
+			opacity: 0,
+			onComplete: () => {
+				this.$loader.remove();
+			}
+		});
+		tl.add( () => {
+			this.sceneCtx.Planes.introAnim();
+		});
 	}
 }

@@ -184,34 +184,31 @@ export default class Planes {
         let planeGroupWidth = planeGroupBox.max.x - planeGroupBox.min.x;
 
         //limit
-        let min = 0;
-        let max = planeGroupWidth - this.baseHeight * Math.tan(0.4);
+        let max = 0;
+        let min = planeGroupWidth - this.baseHeight * Math.tan(0.4);
+        let xTarget = this.planeGroup.position.x + delta * 0.33;
 
-
-        //if (this.planeGroup.position.x)
-        let xTarget = Math.min(
-          min,
-          Math.max(this.planeGroup.position.x + delta * 0.33, -max)
-        );
-
-        gsap.to(this.planeGroup.position, 0.5, {
-          x: xTarget,
-          ease: 'power2.out',
-        });
-
-        //this.scrollOffset = xTarget * 0.008;
-        this.scrollOffset += delta * 0.0006;
-        this.planes.forEach(plane => {
-          gsap.to(plane.mesh.material.uniforms.u_offsetPos, 0.5, {
-            value: this.scrollOffset.toFixed(2),
+        if ( xTarget > min && xTarget < -max ) {
+          gsap.to(this.planeGroup.position, 0.5, {
+            x: xTarget,
             ease: 'power2.out',
           });
-          gsap.to(plane, 0.5, {
-            offset: this.scrollOffset.toFixed(2),
-            ease: 'power2.out',
+  
+          //this.scrollOffset = xTarget * 0.008;
+          this.scrollOffset += delta * 0.0006;
+          this.planes.forEach(plane => {
+            gsap.to(plane.mesh.material.uniforms.u_offsetPos, 0.5, {
+              value: this.scrollOffset.toFixed(2),
+              ease: 'power2.out',
+            });
+            gsap.to(plane, 0.5, {
+              offset: this.scrollOffset.toFixed(2),
+              ease: 'power2.out',
+            });
+            plane.material.uniforms.u_offsetPos.value = this.offset.toFixed(2);
           });
-          //plane.material.uniforms.u_offsetPos.value = this.offset.toFixed(2);
-        });
+        }
+
       } else {
         let openIndex = this.planes.findIndex(plane => plane.isOpen == true);
 
@@ -232,6 +229,23 @@ export default class Planes {
         }
       }
     }
+  }
+
+  resize() {
+    this.baseWidth = window.innerWidth / 7;
+    this.baseHeight = ((this.baseWidth * 10) / 16) * 3.5;
+
+    console.log('resize');
+
+    this.planes.forEach( (plane, i) => {
+      let posX = i * (this.baseWidth + this.margin);
+      plane.basePos = posX;
+      plane.wrapper.gsapMatrix(0.5, {
+					index: 12,
+          to: plane.basePos,
+          ease: 'power3.inOut',
+      });
+    })
   }
 
   update() {
@@ -265,7 +279,7 @@ export default class Planes {
   introAnim() {
     let tl = gsap.timeline();
 
-    this.planes.forEach(plane => {
+    this.planes.forEach( (plane, i) => {
 
       // first scale
       tl.add(() => {
@@ -274,7 +288,7 @@ export default class Planes {
           to: 0.1,
           ease: 'power3.inOut',
         });
-      }, 1);
+      }, i * 0.02);
 
 			tl.to(plane.mesh.material.uniforms.u_scale.value , {
 				x: 0.1,
@@ -290,7 +304,7 @@ export default class Planes {
           to: Math.tan(0.4),
           ease: 'power2.inOut',
         });
-      }, '<.4');
+      }, '<.2');
 			
       //translateX
       tl.add(() => {
@@ -299,7 +313,7 @@ export default class Planes {
           to: plane.basePos,
           ease: 'power3.inOut',
         });
-      }, '<.5');
+      }, 1);
 			
       //scale up
       tl.add(() => {

@@ -2,6 +2,7 @@ import splitText from './utils/splitText';
 import gsap from 'gsap';
 import data from '../store/data';
 
+
 export default class Content {
   constructor() {
     gsap.config({
@@ -18,6 +19,9 @@ export default class Content {
 
     this.$year = document.querySelector('.project .title .year');
     this.$year.textContent = `//${data.projects[i].year}`;
+
+    this.$description = document.querySelector('.project .description');
+    this.$description.textContent = `${data.projects[i].description}`;
 
     if (this.currentTl) this.currentTl.kill();
     let tl = gsap.timeline();
@@ -37,7 +41,7 @@ export default class Content {
 
     tl.to(this.splitH2.getChars(), 1, {
       x: 0,
-      ease: 'power3.easeOut',
+      ease: 'power3.out',
       // stagger: {
       // 	amount: 0.25,
       // },
@@ -46,8 +50,16 @@ export default class Content {
     tl.to(this.splitYear.getLines(), 0.8, {
       y: 0,
       opacity: 1,
-      ease: 'power3.easeOut',
+      ease: 'power3.out',
     }, '<');
+
+    tl.to(this.$description, 0.8, {
+      y: 0,
+      opacity: 1,
+      ease: 'power3.out',
+      //color: `hsl(${data.projects[i].color * 360}, 100%, 50%)`,
+    }, '<');
+
   }
 
   close() {
@@ -57,7 +69,7 @@ export default class Content {
 
     tl.to(this.splitH2.getChars(), 1, {
       x: '110%',
-      ease: 'power3.easeOut',
+      ease: 'power3.out',
       onComplete: () => {
         this.splitH2.getElement().innerHTML = '';
       },
@@ -66,11 +78,22 @@ export default class Content {
     tl.to(this.splitYear.getLines(), 0.7, {
       y: '-110%',
       opacity: 0.2,
-      ease: 'power3.easeOut',
+      ease: 'power3.out',
       onComplete: () => {
         this.splitYear.getElement().innerHTML = '';
       },
     },'<');
+
+    tl.to(this.$description, 0.8, {
+      y: '5vh',
+      opacity: 0,
+      ease: 'power3.out',
+      onComplete: () => {
+        this.$description.textContent = '';
+      },
+    }, '<');
+
+
   }
 
   closeOpen(i) {
@@ -84,7 +107,7 @@ export default class Content {
     //close
     tl.to(this.splitH2.getChars(), 1, {
       x: '110%',
-      ease: 'power3.easeOut',
+      ease: 'power3.out',
       onComplete: () => {
         this.splitH2.getElement().innerHTML = '';
       },
@@ -93,9 +116,18 @@ export default class Content {
     tl.to(this.splitYear.getLines(), 0.7, {
       y: '-110%',
       opacity: 0.2,
-      ease: 'power3.easeOut',
+      ease: 'power3.out',
       onComplete: () => {
         this.splitYear.getElement().innerHTML = '';
+      },
+    }, '<');
+
+    tl.to(this.$description, 0.7, {
+      y: '5vh',
+      opacity: 0,
+      ease: 'power3.inOut',
+      onComplete: () => {
+        this.$description.innerHTML = '';
       },
     }, '<');
   }
