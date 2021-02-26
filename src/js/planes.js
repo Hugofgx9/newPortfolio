@@ -18,6 +18,7 @@ export default class Planes {
     this.canWheel = true;
     this.openScale = 3.5;
     this.wavyAmount = { value: 0 };
+    this.scrollOffset = 0;
 
     this.initMethods();
     this.createPlanes();
@@ -82,13 +83,24 @@ export default class Planes {
     this.planeGroup = new THREE.Group();
     this.planeGroup.name = 'mesh-group';
 
+    let loadManager = new THREE.LoadingManager();
+
+    loadManager.onLoad = () => {
+      this.sceneCtx.Loader.emit('loaded');
+      this.scene.add(this.planeGroup);
+    }
+
+    loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
+      this.sceneCtx.Loader.emit('progress', itemsLoaded / itemsTotal);
+    }
+
     for (let i in data.projects) {
       let planeWrapper = new THREE.Group();
 
       // const loaderIMG = new THREE.ImageLoader();
       // let img = loaderIMG.load();
 
-      let loader = new THREE.TextureLoader();
+      let loader = new THREE.TextureLoader(loadManager);
       let text = loader.load(data.projects[i].img);
 
       let geometry = new THREE.PlaneGeometry(
@@ -154,11 +166,7 @@ export default class Planes {
         to: 0.01,
       });
     }
-
-    this.scene.add(this.planeGroup);
-    this.introAnim();
     //this.centerObject(this.planeGroup);
-    this.scrollOffset = 0;
   }
 
   onWheel(e) {
@@ -166,6 +174,9 @@ export default class Planes {
       let allPlanesAreClosed = this.planes.every(
         plane => plane.isOpen == false
       );
+
+      //get the bigger absolute value bitween deltaY and deltaX;
+      let delta = Math.abs( e.deltaY ) > Math.abs( e.deltaX ) ? e.deltaY : e.deltaX;
 
       if (allPlanesAreClosed) {
         //change getgroup width to calcul it with plane width and margins
@@ -176,10 +187,11 @@ export default class Planes {
         let min = 0;
         let max = planeGroupWidth - this.baseHeight * Math.tan(0.4);
 
+
         //if (this.planeGroup.position.x)
         let xTarget = Math.min(
           min,
-          Math.max(this.planeGroup.position.x + e.deltaY * 0.33, -max)
+          Math.max(this.planeGroup.position.x + delta * 0.33, -max)
         );
 
         gsap.to(this.planeGroup.position, 0.5, {
@@ -188,7 +200,7 @@ export default class Planes {
         });
 
         //this.scrollOffset = xTarget * 0.008;
-        this.scrollOffset += e.deltaY * 0.0006;
+        this.scrollOffset += delta * 0.0006;
         this.planes.forEach(plane => {
           gsap.to(plane.mesh.material.uniforms.u_offsetPos, 0.5, {
             value: this.scrollOffset.toFixed(2),
@@ -203,14 +215,14 @@ export default class Planes {
       } else {
         let openIndex = this.planes.findIndex(plane => plane.isOpen == true);
 
-        if (e.deltaY > 0 && openIndex > 0) {
+        if (delta > 0 && openIndex > 0) {
           this.canWheel = false;
           this.swipeToOtherPlane(
             this.planes[openIndex - 1],
             this.planes[openIndex],
             0.7
           );
-        } else if (e.deltaY < 0 && openIndex < this.planes.length - 1) {
+        } else if (delta < 0 && openIndex < this.planes.length - 1) {
           this.canWheel = false;
           this.swipeToOtherPlane(
             this.planes[openIndex + 1],

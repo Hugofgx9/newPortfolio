@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import Planes from './planes';
 import Stats from 'stats.js';
+import Loader from './loader';
 
 var stats = new Stats();
 stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -10,6 +11,8 @@ stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
 export default class Scene {
 	constructor(opts = {}) {
 		this.options = opts;
+
+		this.Loader = new Loader(this);
 
 		this.container = document.querySelector('canvas');
 
