@@ -17,6 +17,7 @@ export default class Planes {
     this.clock = this.sceneCtx.clock;
     this.canWheel = false;
     this.resizeScale = new THREE.Vector2(1,1);
+    this.initWidth = window.innerWidth;
     this.openScale = 3.5;
     this.wavyAmount = { value: 0 };
     this.scrollOffset = 0;
@@ -33,50 +34,64 @@ export default class Planes {
     this.Content = new Content();
   }
 
-  initMethods() {
-    // make simple
-    //  to gsap matrix;
-    THREE.Mesh.prototype.gsapMatrix = function (time, opts = {}) {
-      let matrixElement = this.matrix.elements[opts.index];
-      let targetValue = opts.to;
-      let initValue = { value: matrixElement };
-      let delay = opts.delay || '';
-      let ease = opts.ease || '';
-      let onStart = opts.onStart || '';
-      let onComplete = opts.onComplete || '';
+  /**
+   * Change resieScale and plane.basPos;
+   */
 
-      gsap.to(initValue, time, {
-        value: targetValue,
-        delay,
-        ease,
-        onStart,
-        onComplete,
-        onUpdate: () => {
-          this.matrix.elements[opts.index] = initValue.value;
-        },
+  onResize() {
+
+    let ratio = window.innerWidth / this.initWidth;
+    this.resizeScale.set(ratio, ratio) ;
+
+
+    this.planes.forEach( (plane, i) => {
+
+      let posX = i * ( (this.baseWidth * this.resizeScale.x) + this.margin);
+      plane.basePos = posX;
+      //position
+      plane.wrapper.gsapMatrix(0.5, {
+					index: 12,
+          to: plane.basePos,
+          ease: 'power3.inOut',
       });
-    };
-
-    THREE.Group.prototype.gsapMatrix = function (time, opts = {}) {
-      let matrixElement = this.matrix.elements[opts.index];
-      let targetValue = opts.to;
-      let initValue = { value: matrixElement };
-      let delay = opts.delay || '';
-      let ease = opts.ease || '';
-      let onStart = opts.onStart || '';
-      let onComplete = opts.onComplete || '';
-
-      gsap.to(initValue, time, {
-        value: targetValue,
-        delay,
-        ease,
-        onStart,
-        onComplete,
-        onUpdate: () => {
-          this.matrix.elements[opts.index] = initValue.value;
-        },
+      //scale
+      plane.wrapper.gsapMatrix(0.5, {
+					index: 0,
+          to: this.resizeScale.x,
+          ease: 'power3.inOut',
       });
-    };
+      plane.wrapper.gsapMatrix(0.5, {
+					index: 5,
+          to: this.resizeScale.y,
+          ease: 'power3.inOut',
+      });
+      // uniform ratio and scale
+      //plane.mesh.material.uniforms.u_planeRatio.value = this.baseWidth * this.resizeScale.x / this.baseHeight;
+
+      //skewX
+      plane.wrapper.gsapMatrix(0.5, {
+        index: 4,
+        to: Math.tan(0.4),
+        ease: 'power2.inOut',
+      });
+    })
+
+
+
+
+    // this.baseWidth = window.innerWidth / 7;
+    // this.baseHeight = ((this.baseWidth * 10) / 16) * 3.5;
+
+
+    // this.planes.forEach( (plane, i) => {
+    //   let posX = i * (this.baseWidth + this.margin);
+    //   plane.basePos = posX;
+    //   plane.wrapper.gsapMatrix(0.5, {
+		// 			index: 12,
+    //       to: plane.basePos,
+    //       ease: 'power3.inOut',
+    //   });
+    // })
   }
 
   createPlanes() {
@@ -232,23 +247,6 @@ export default class Planes {
     }
   }
 
-  resize() {
-    this.baseWidth = window.innerWidth / 7;
-    this.baseHeight = ((this.baseWidth * 10) / 16) * 3.5;
-
-    console.log('resize');
-
-    this.planes.forEach( (plane, i) => {
-      let posX = i * (this.baseWidth + this.margin);
-      plane.basePos = posX;
-      plane.wrapper.gsapMatrix(0.5, {
-					index: 12,
-          to: plane.basePos,
-          ease: 'power3.inOut',
-      });
-    })
-  }
-
   update() {
     this.planes.forEach((plane, i) => {
       //plane.material.uniforms.u_time.value = i * 0.5;
@@ -330,48 +328,32 @@ export default class Planes {
 				duration: 1
 			},'<');
 			
-      tl.to(
-				plane.mesh.material.uniforms.u_greyAmount,
-        {
-					duration: 1.5,
-          value: 0,
-          ease: 'power2.inOut',
-        },
-        '<0.5'
-				);
+      tl.to(plane.mesh.material.uniforms.u_greyAmount, {
+        duration: 1.5,
+        value: 0,
+        ease: 'power2.inOut',
+      },'<0.5');
 				
-      tl.to(
-        plane.mesh.material.uniforms.u_tintAmount,
-        {
-          duration: 1.5,
-          value: 1,
-          ease: 'power2.inOut',
-        },
-        '<'
-      );
+      tl.to( plane.mesh.material.uniforms.u_tintAmount, {
+        duration: 1.5,
+        value: 1,
+        ease: 'power2.inOut',
+      },'<');
 
-      tl.to(
-        plane.mesh.material.uniforms.u_tintAmount,
-        {
-          duration: 1.5,
-          value: 1,
-          ease: 'power2.inOut',
-        },
-        '<'
-      );
+      tl.to( plane.mesh.material.uniforms.u_tintAmount, {
+        duration: 1.5,
+        value: 1,
+        ease: 'power2.inOut',
+      },'<');
     });
     tl.add( () => {
         this.canWheel = true;
     });
-    tl.to(
-      this.wavyAmount,
-      {
-        value: 1,
-        duration: 7,
-        ease: 'power2.inOut',
-      },
-      '>-1'
-    );
+    tl.to( this.wavyAmount, {
+      value: 1,
+      duration: 7,
+      ease: 'power2.inOut',
+    }, '>-1');
   }
 
   openPlane(plane) {
@@ -379,15 +361,14 @@ export default class Planes {
     let i = this.planes.indexOf(plane);
     plane.isOpen = true;
 
-    //20 is margin
-    let planeX = i * (this.baseWidth + 20);
-    let offset = (this.baseWidth * (this.openScale - 1)) / 2;
+    let planeX = i * (this.baseWidth * this.resizeScale.x + this.margin);
+    let offset = (this.baseWidth * this.resizeScale.x *(this.openScale - 1) ) / 2;
 
     let tl = gsap.timeline();
 
     //center Group
     tl.to(this.planeGroup.position, 1, {
-      x: -planeX,
+      x: - planeX,
       ease: 'power2.inOut',
     });
 
@@ -398,35 +379,28 @@ export default class Planes {
     }, 0.2);
 
     // scale plane
-    tl.add(
-      () =>
-        plane.wrapper.gsapMatrix(duration * 1.2, {
-          index: 0,
-          to: this.openScale,
-          ease: 'power3.out',
+    tl.add( () => {
+      plane.wrapper.gsapMatrix(duration * 1.2, {
+        index: 0,
+        to: this.openScale * this.resizeScale.x  ,
+        ease: 'power3.out',
 
-          onStart: () => {
-            this.moveOtherPlanes(i, offset);
-            this.skewAll(0);
-            this.Content.open(i);
-          },
-        }),
-      0.2
-    );
+        onStart: () => {
+          this.moveOtherPlanes(i, offset);
+          this.skewAll(0);
+          this.Content.open(i);
+        },
+      });
+    }, 0.2);
 
     // uncolor
-    tl.to(
-      plane.mesh.material.uniforms.u_tintAmount,
-      duration * 2,
-      {
-        value: 0,
-        ease: 'power3.out',
-        onStart: () => {
-          this.colorOtherPlanes(i, plane.color, duration * 3);
-        },
+    tl.to( plane.mesh.material.uniforms.u_tintAmount, duration * 2, {
+      value: 0,
+      ease: 'power3.out',
+      onStart: () => {
+        this.colorOtherPlanes(i, plane.color, duration * 3);
       },
-      0.2
-    );
+    }, 0.2);
   }
 
   closePlane(plane) {
@@ -436,46 +410,34 @@ export default class Planes {
 
     let tl = gsap.timeline();
 
-    tl.to(
-      plane.mesh.material.uniforms.u_scale.value,
-      duration * 1.2,
-      {
-        x: 1,
+    //scale uniforms
+    tl.to( plane.mesh.material.uniforms.u_scale.value, duration * 1.2, {
+        x: 1 ,
         ease: 'power3.out',
-      },
-      0.2
-    );
+    },0.2);
 
     //color
-    tl.to(
-      plane.mesh.material.uniforms.u_tintAmount,
-      duration * 2,
-      {
-        value: 1,
-        ease: 'power3.out',
-        onStart: () => {
-          this.colorOtherPlanes(i);
-          this.changePlaneColor(plane, plane.color, duration * 2);
-        },
+    tl.to( plane.mesh.material.uniforms.u_tintAmount, duration * 2, {
+      value: 1,
+      ease: 'power3.out',
+      onStart: () => {
+        this.colorOtherPlanes(i);
+        this.changePlaneColor(plane, plane.color, duration * 2);
       },
-      '<'
-    );
+    }, '<');
 
     // scale plane
-    tl.add(
-      () =>
-        plane.wrapper.gsapMatrix(duration * 1.2, {
-          index: 0,
-          to: 1,
-          ease: 'power3.out',
-          onStart: () => {
-            this.Content.close(), this.moveOtherPlanes(i, 0);
-            this.skewAll(1);
-          },
-          onComplete: () => {},
-        }),
-      '<'
-    );
+    tl.add( () => {
+      plane.wrapper.gsapMatrix(duration * 1.2, {
+        index: 0,
+        to: this.resizeScale.x,
+        ease: 'power3.out',
+        onStart: () => {
+          this.Content.close(), this.moveOtherPlanes(i, 0);
+          this.skewAll(1);
+        },
+      });
+    }, '<');
   }
 
   colorOtherPlanes(index, color, duration) {
@@ -495,13 +457,13 @@ export default class Planes {
       if (i > index) {
         plane.wrapper.gsapMatrix(0.7, {
           index: 12,
-          to: plane.basePos + x,
+          to: (plane.basePos) + x,
           ease: 'power3.out',
         });
       } else if (i < index) {
         plane.wrapper.gsapMatrix(0.7, {
           index: 12,
-          to: plane.basePos - x,
+          to: (plane.basePos) - x,
           ease: 'power3.out',
         });
       }
@@ -509,7 +471,7 @@ export default class Planes {
   }
 
   openOtherPlanes(planeToOpen, planeToClose) {
-    let x = (this.baseWidth * (this.openScale - 1)) / 2;
+    let x = (this.baseWidth * this.resizeScale.x * (this.openScale - 1)) / 2;
     let duration = 0.7;
 
     let i_ToOpen = this.planes.indexOf(planeToOpen);
@@ -519,7 +481,7 @@ export default class Planes {
     let tl = gsap.timeline();
 
     //20 is margin
-    let planeX = i_ToOpen * (this.baseWidth + 20);
+    let planeX = i_ToOpen * (this.baseWidth * this.resizeScale.x + 20);
 
     //center new
     tl.to(this.planeGroup.position, 1.5, {
@@ -532,103 +494,66 @@ export default class Planes {
     });
 
     //close plane
-    tl.add(
-      () =>
-        planeToClose.wrapper.gsapMatrix(duration * 1.2, {
-          index: 0,
-          to: 1,
-          ease: 'power3.out',
-        }),
-      0.7
-    );
-
-    tl.to(
-      planeToClose.mesh.material.uniforms.u_scale.value,
-      duration * 1.2,
-      {
-        x: 1,
+    tl.add( () => {
+      planeToClose.wrapper.gsapMatrix(duration * 1.2, {
+        index: 0,
+        to: this.resizeScale.x ,
         ease: 'power3.out',
-      },
-      '<'
-    );
+      });
+    }, 0.7);
+
+    tl.to( planeToClose.mesh.material.uniforms.u_scale.value, duration * 1.2, {
+      x: 1,
+      ease: 'power3.out',
+    }, '<');
 
     //open plane
-    tl.add(
-      () =>
-        planeToOpen.wrapper.gsapMatrix(duration * 1.2, {
-          index: 0,
-          to: this.openScale,
-          ease: 'power3.out',
-        }),
-      '<'
-    );
+    tl.add( () => planeToOpen.wrapper.gsapMatrix(duration * 1.2, {
+      index: 0,
+      to: this.openScale * this.resizeScale.x,
+      ease: 'power3.out',
+    }),'<');
 
-    tl.to(
-      planeToOpen.mesh.material.uniforms.u_scale.value,
-      duration * 2,
-      {
-        x: this.openScale,
-        ease: 'power3.out',
-      },
-      '<'
-    );
+    tl.to( planeToOpen.mesh.material.uniforms.u_scale.value, duration * 2, {
+      x: this.openScale,
+      ease: 'power3.out',
+    },'<');
 
     //tint
-    tl.to(
-      planeToClose.mesh.material.uniforms.u_tintAmount,
-      duration * 1.2,
-      {
-        value: 1,
-        ease: 'power3.out',
-      },
-      '<'
-    );
-    tl.to(
-      planeToOpen.mesh.material.uniforms.u_tintAmount,
-      duration * 1.2,
-      {
-        value: 0,
-        ease: 'power3.out',
-        onStart: () => this.colorOtherPlanes(i_ToOpen, planeToOpen.color),
-      },
-      '<'
-    );
+    tl.to( planeToClose.mesh.material.uniforms.u_tintAmount, duration * 1.2, {
+      value: 1,
+      ease: 'power3.out',
+    }, '<' );
+
+    tl.to( planeToOpen.mesh.material.uniforms.u_tintAmount, duration * 1.2, {
+      value: 0,
+      ease: 'power3.out',
+      onStart: () => this.colorOtherPlanes(i_ToOpen, planeToOpen.color),
+    },'<');
 
     //move planes
-    tl.add(
-      () =>
-        planeToOpen.wrapper.gsapMatrix(duration, {
-          index: 12,
-          to: planeToOpen.basePos,
-          ease: 'power3.out',
-        }),
-      '<'
-    );
+    tl.add(() => planeToOpen.wrapper.gsapMatrix( duration, {
+      index: 12,
+      to: planeToOpen.basePos,
+      ease: 'power3.out',
+    }),'<');
 
     this.planes.forEach((plane, i) => {
       if (newIndexIsGreater) {
         if (i_ToClose <= i && i < i_ToOpen) {
-          tl.add(
-            () =>
-              plane.wrapper.gsapMatrix(duration * 1.1, {
-                index: 12,
-                to: plane.basePos - x,
-                ease: 'power3.out',
-              }),
-            '<'
-          );
+          tl.add(() => plane.wrapper.gsapMatrix( duration * 1.1, {
+            index: 12,
+            to: plane.basePos - x,
+            ease: 'power3.out',
+          }),'<');
         }
       } else if (!newIndexIsGreater) {
         if (i_ToOpen < i && i <= i_ToClose) {
-          tl.add(
-            () =>
-              plane.wrapper.gsapMatrix(duration * 1.1, {
-                index: 12,
-                to: plane.basePos + x,
-                ease: 'power3.out',
-              }),
-            '<'
-          );
+          tl.add(() =>plane.wrapper.gsapMatrix( duration * 1.1, {
+            index: 12,
+            to: plane.basePos + x,
+            ease: 'power3.out',
+          }),'<');
         }
       }
     });
@@ -638,7 +563,7 @@ export default class Planes {
   }
 
   swipeToOtherPlane(planeToOpen, planeToClose) {
-    let x = (this.baseWidth * (this.openScale - 1)) / 2;
+    let x = (this.baseWidth * this.resizeScale.x * (this.openScale - 1)) / 2;
     let duration = 0.7;
 
     let i_ToOpen = this.planes.indexOf(planeToOpen);
@@ -646,13 +571,13 @@ export default class Planes {
     let newIndexIsGreater = i_ToOpen > i_ToClose;
 
     //20 is margin
-    let planeX = i_ToOpen * (this.baseWidth + 20);
+    let planeX = i_ToOpen * (this.baseWidth * this.resizeScale.x  + 20);
 
     let tl = gsap.timeline();
 
     //center new
     tl.to(this.planeGroup.position, 0.8, {
-      x: -planeX,
+      x: - planeX,
       ease: 'power2.inOut',
       onStart: () => {
         this.Content.closeOpen(i_ToOpen);
@@ -665,103 +590,63 @@ export default class Planes {
     }, 1.2);
 
     //close plane
-    tl.add(
-      () =>
-        planeToClose.wrapper.gsapMatrix(duration * 1.2, {
-          index: 0,
-          to: 1,
-          ease: 'power3.out',
-        }),
-      0.2
-    );
+    tl.add(() => planeToClose.wrapper.gsapMatrix(duration * 1.2, {
+      index: 0,
+      to: 1 * this.resizeScale.x,
+      ease: 'power3.out',
+    }),0.2);
 
-    tl.to(
-      planeToClose.mesh.material.uniforms.u_scale.value,
-      duration * 1.2,
-      {
-        x: 1,
-        ease: 'power3.out',
-      },
-      '<'
-    );
+    tl.to( planeToClose.mesh.material.uniforms.u_scale.value, duration * 1.2, {
+      x: 1,
+      ease: 'power3.out',
+    }, '<');
 
     //open plane
-    tl.add(
-      () =>
-        planeToOpen.wrapper.gsapMatrix(duration * 1.2, {
-          index: 0,
-          to: this.openScale,
-          ease: 'power3.out',
-        }),
-      '<'
-    );
+    tl.add(() =>planeToOpen.wrapper.gsapMatrix(duration * 1.2, {
+      index: 0,
+      to: this.openScale * this.resizeScale.x,
+      ease: 'power3.out',
+    }),'<' );
 
-    tl.to(
-      planeToOpen.mesh.material.uniforms.u_scale.value,
-      duration * 2,
-      {
-        x: this.openScale,
-        ease: 'power3.out',
-      },
-      '<'
-    );
+    tl.to(planeToOpen.mesh.material.uniforms.u_scale.value,duration * 2,{
+      x: this.openScale,
+      ease: 'power3.out',
+    },'<');
 
     //tint
-    tl.to(
-      planeToClose.mesh.material.uniforms.u_tintAmount,
-      duration * 1.2,
-      {
-        value: 1,
-        ease: 'power3.out',
-      },
-      '<'
-    );
-    tl.to(
-      planeToOpen.mesh.material.uniforms.u_tintAmount,
-      duration * 1.2,
-      {
-        value: 0,
-        ease: 'power3.out',
-        onStart: () => this.colorOtherPlanes(i_ToOpen, planeToOpen.color),
-      },
-      '<'
-    );
+    tl.to(planeToClose.mesh.material.uniforms.u_tintAmount,duration * 1.2,{
+      value: 1,
+      ease: 'power3.out',
+    },'<');
+    tl.to(planeToOpen.mesh.material.uniforms.u_tintAmount,duration * 1.2,{
+      value: 0,
+      ease: 'power3.out',
+      onStart: () => this.colorOtherPlanes(i_ToOpen, planeToOpen.color),
+    },'<');
 
     //move planes
-    tl.add(
-      () =>
-        planeToOpen.wrapper.gsapMatrix(duration, {
-          index: 12,
-          to: planeToOpen.basePos,
-          ease: 'power3.out',
-        }),
-      '<'
-    );
+    tl.add(() =>planeToOpen.wrapper.gsapMatrix(duration, {
+      index: 12,
+      to: planeToOpen.basePos,
+      ease: 'power3.out',
+    }),'<' );
 
     this.planes.forEach((plane, i) => {
       if (newIndexIsGreater) {
         if (i_ToClose <= i && i < i_ToOpen) {
-          tl.add(
-            () =>
-              plane.wrapper.gsapMatrix(duration * 1.1, {
-                index: 12,
-                to: plane.basePos - x,
-                ease: 'power3.out',
-              }),
-            '<'
-          );
+          tl.add( () => plane.wrapper.gsapMatrix(duration * 1.1, {
+            index: 12,
+            to: plane.basePos - x,
+            ease: 'power3.out',
+          }),'<' );
         }
       } else if (!newIndexIsGreater) {
         if (i_ToOpen < i && i <= i_ToClose) {
-          tl.add(
-            () =>
-              plane.wrapper.gsapMatrix(duration * 1.1, {
-                index: 12,
-                to: plane.basePos + x,
-                ease: 'power3.out',
-              }),
-            '<'
-          );
+          tl.add(() =>plane.wrapper.gsapMatrix(duration * 1.1, {
+            index: 12,
+            to: plane.basePos + x,
+            ease: 'power3.out',
+          }),'<');
         }
       }
     });
@@ -812,5 +697,51 @@ export default class Planes {
     tl.set(uniforms.u_tintTransfert, {
       value: 0,
     });
+  }
+
+  initMethods() {
+    // make simple
+    //  to gsap matrix;
+    THREE.Mesh.prototype.gsapMatrix = function (time, opts = {}) {
+      let matrixElement = this.matrix.elements[opts.index];
+      let targetValue = opts.to;
+      let initValue = { value: matrixElement };
+      let delay = opts.delay || '';
+      let ease = opts.ease || '';
+      let onStart = opts.onStart || '';
+      let onComplete = opts.onComplete || '';
+
+      gsap.to(initValue, time, {
+        value: targetValue,
+        delay,
+        ease,
+        onStart,
+        onComplete,
+        onUpdate: () => {
+          this.matrix.elements[opts.index] = initValue.value;
+        },
+      });
+    };
+
+    THREE.Group.prototype.gsapMatrix = function (time, opts = {}) {
+      let matrixElement = this.matrix.elements[opts.index];
+      let targetValue = opts.to;
+      let initValue = { value: matrixElement };
+      let delay = opts.delay || '';
+      let ease = opts.ease || '';
+      let onStart = opts.onStart || '';
+      let onComplete = opts.onComplete || '';
+
+      gsap.to(initValue, time, {
+        value: targetValue,
+        delay,
+        ease,
+        onStart,
+        onComplete,
+        onUpdate: () => {
+          this.matrix.elements[opts.index] = initValue.value;
+        },
+      });
+    };
   }
 }

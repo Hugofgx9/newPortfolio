@@ -70,7 +70,7 @@ export default class Scene {
 	onWindowResize() {
 		this.updateCamera();
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		//this.Planes.resize();
+		this.Planes.onResize();
 	}
 
 	onMouseMove(event) {
