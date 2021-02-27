@@ -11,16 +11,18 @@ export default class Content {
 
     this.projects = data.projects;
     this.currentTl = null;
+
+    this.links();
   }
 
   open(i) {
-    this.$h2 = document.querySelector('.project .title h2');
+    this.$h2 = document.querySelector('.content .title h2');
     this.$h2.textContent = data.projects[i].name;
 
-    this.$year = document.querySelector('.project .title .year');
+    this.$year = document.querySelector('.content .title .year');
     this.$year.textContent = `//${data.projects[i].year}`;
 
-    this.$description = document.querySelector('.project .description');
+    this.$description = document.querySelector('.content .description');
     this.$description.textContent = `${data.projects[i].description}`;
 
     if (this.currentTl) this.currentTl.kill();
@@ -28,13 +30,13 @@ export default class Content {
     this.currentTl = tl;
 
     this.splitH2 = new splitText({
-      target: '.project .title h2',
+      target: '.content .title h2',
       split: 'chars',
       hide: 'chars',
     });
 
     this.splitYear = new splitText({
-      target: '.project .title .year',
+      target: '.content .title .year',
       split: 'lines', 
       hide: 'lines',
     })
@@ -51,6 +53,10 @@ export default class Content {
       y: 0,
       opacity: 1,
       ease: 'power3.out',
+    }, '<');
+
+    tl.set(this.$description, {
+      y: '5vh',
     }, '<');
 
     tl.to(this.$description, 0.8, {
@@ -84,10 +90,10 @@ export default class Content {
       },
     },'<');
 
-    tl.to(this.$description, 0.8, {
-      y: '5vh',
+    tl.to(this.$description, 0.6, {
+      y: '-5vh',
       opacity: 0,
-      ease: 'power3.out',
+      ease: 'power3.inOut',
       onComplete: () => {
         this.$description.textContent = '';
       },
@@ -123,12 +129,45 @@ export default class Content {
     }, '<');
 
     tl.to(this.$description, 0.7, {
-      y: '5vh',
+      y: '-5vh',
       opacity: 0,
       ease: 'power3.inOut',
       onComplete: () => {
         this.$description.innerHTML = '';
       },
     }, '<');
+  }
+
+  links(){
+    //document.querySelector('.links').addEventListener('mousemove', (e) => console.log(e.clientY));
+    let $svg = document.querySelector('.links svg');
+    let $li = document.querySelectorAll('.links li a');
+    let currentPos = 0;
+
+    let height = $li[0].clientHeight;
+
+    window.addEventListener('resize', () => {
+      height = $li[0].clientHeight;
+      gsap.set($svg ,{
+          y: currentPos * height,  
+        });
+      console.log('resize');
+    });
+
+
+    $li.forEach( (el, index) => {
+      el.addEventListener('mouseover', () => {
+        gsap.to($svg, 0.3, {
+          y: index * height,  
+          delay: 0.2,
+          ease: 'power1.out',
+          onComplete: () => {
+            currentPos = index;
+          }
+        });
+      });
+    })
+
+
   }
 }
