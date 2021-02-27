@@ -151,13 +151,12 @@ export default class Content {
       gsap.set($svg ,{
           y: currentPos * height,  
         });
-      console.log('resize');
     });
 
 
     $li.forEach( (el, index) => {
       el.addEventListener('mouseover', () => {
-        gsap.to($svg, 0.3, {
+        gsap.to($svg, 0.2, {
           y: index * height,  
           delay: 0.2,
           ease: 'power1.out',

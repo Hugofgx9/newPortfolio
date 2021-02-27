@@ -184,11 +184,11 @@ export default class Planes {
         let planeGroupWidth = planeGroupBox.max.x - planeGroupBox.min.x;
 
         //limit
-        let max = 0;
-        let min = planeGroupWidth - this.baseHeight * Math.tan(0.4);
+        let min = 0;
+        let max = planeGroupWidth - this.baseHeight * Math.tan(0.4); // environ 1000
         let xTarget = this.planeGroup.position.x + delta * 0.33;
 
-        if ( xTarget > min && xTarget < -max ) {
+        if ( min < -xTarget && max > -xTarget ) {
           gsap.to(this.planeGroup.position, 0.5, {
             x: xTarget,
             ease: 'power2.out',
@@ -205,7 +205,7 @@ export default class Planes {
               offset: this.scrollOffset.toFixed(2),
               ease: 'power2.out',
             });
-            plane.material.uniforms.u_offsetPos.value = this.offset.toFixed(2);
+            plane.mesh.material.uniforms.u_offsetPos.value = this.scrollOffset.toFixed(2);
           });
         }
 
