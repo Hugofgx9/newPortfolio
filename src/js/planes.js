@@ -15,7 +15,8 @@ export default class Planes {
     this.baseHeight = ((this.baseWidth * 10) / 16) * 3.5;
     this.margin = 20;
     this.clock = this.sceneCtx.clock;
-    this.canWheel = true;
+    this.canWheel = false;
+    this.resizeScale = new THREE.Vector2(1,1);
     this.openScale = 3.5;
     this.wavyAmount = { value: 0 };
     this.scrollOffset = 0;
@@ -148,7 +149,7 @@ export default class Planes {
       plane.name = `mesh-${i}`;
       planeWrapper.name = `mesh-wrapper-${i}`;
 
-      let posX = i * (this.baseWidth + this.margin);
+      let posX = i * ( (this.baseWidth * this.resizeScale.x) + this.margin);
 
       this.planes.push({
         mesh: plane,
@@ -358,6 +359,9 @@ export default class Planes {
         },
         '<'
       );
+    });
+    tl.add( () => {
+        this.canWheel = true;
     });
     tl.to(
       this.wavyAmount,

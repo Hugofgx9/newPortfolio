@@ -12,172 +12,178 @@ body{
 	justify-content: center;
 	position: relative;
 
-	#container{
-		display: grid;
-		grid-auto-flow: column;
+}
 
-		.item{
-			background: white;
-			height: 50vh;
-			width: 0vw;
-			margin-right: -1vw;
-		}
+#container{
+	display: grid;
+	grid-auto-flow: column;
+
+	.item{
+		background: white;
+		height: 50vh;
+		width: 0vw;
+		margin-right: -1vw;
+	}
+}
+
+canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+}
+
+.loader {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 101vh;
+	background-color: rgb(14, 14, 14);
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	p {
+		color: white;
+		font-size: 3vw;
+	}
+	
+}
+
+.center {
+	display: none;
+	height: 10px;
+	width: 10px;
+	position: absolute;
+	background: red;
+	left: 50vw;
+	top: 50vh;
+	transform: translate(-50%, -50%);
+	z-index: 20;
+}
+
+.content {
+	$primaryColor: rgb(100, 100, 100);
+	$smallFont: min(0.4em, 17px );
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 6;
+	padding: 6px;
+	width: 100vw;
+	height: 100vh;
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	grid-template-rows: repeat(10, 1fr);
+	pointer-events: none;
+	font-size: 3vw;
+	color: $primaryColor;
+
+	h1{
+		font-size: $smallFont;
+		grid-column: 1/10;
+		grid-row: 1;
 	}
 
-	canvas {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-	}
+	.title {
+		grid-column: 3/10;
+		grid-row: 2 ;
+		//font-size: 40px;
+		//display: inline-block;
 
-	.loader {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 101vh;
-		background-color: rgb(14, 14, 14);
-		z-index: 10;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		
+		h2{
+			display: inline;
+			vertical-align: middle;
+			
+			[data-split=char] {
+				transform: translate3d(-100%, 0, 0);
+				vertical-align: baseline;
 
-		p {
-			color: white;
-			font-size: 3vw;
+			}
 		}
 		
-	}
-
-	.center {
-		display: none;
-		height: 10px;
-		width: 10px;
-		position: absolute;
-		background: red;
-		left: 50vw;
-		top: 50vh;
-		transform: translate(-50%, -50%);
-		z-index: 20;
-	}
-
-	.content {
-		$primaryColor: rgb(100, 100, 100);
-		$smallFont: min(0.4em, 17px );
-		position: absolute;
-		top: 0;
-		left: 0;
-		z-index: 6;
-		padding: 6px;
-		width: 100vw;
-		height: 100vh;
-		display: grid;
-		grid-template-columns: repeat(12, 1fr);
-		grid-template-rows: repeat(10, 1fr);
-		pointer-events: none;
-		font-size: 3vw;
-		color: $primaryColor;
-
-		h1{
-			font-size: $smallFont;
-			grid-column: 1/10;
-			grid-row: 1;
-		}
-
-		.title {
-			grid-column: 3/10;
-			grid-row: 2 ;
-			//font-size: 40px;
-			//display: inline-block;
-
-			
-			h2{
-				display: inline;
-				vertical-align: middle;
-				
-				[data-split=char] {
-					transform: translate3d(-100%, 0, 0);
-					vertical-align: baseline;
-
-				}
-			}
-			
-			span{
-				vertical-align: baseline;
-				font-weight: 100;
-				font-size: $smallFont;
-				
-				[data-split=line-wrapper] {
-					display: inline-block !important;
-					vertical-align: middle;
-					position: relative;
-					bottom: -3px;
-				}
-				
-				[data-split=line] {
-					transform: translate3d(0, 100%, 0);
-					opacity: 0;
-					vertical-align: baseline;
-				}
-			}
-		}
-
-		.description{
-			font-size: $smallFont;
-			grid-column: 3/11;
-			grid-row: 9;
-			opacity: 0;
-			transform: translate3d(0, 5vh, 0);
-			align-self: end;
-
-			&:before {
-				content: "";
-				position: absolute;
-				background-color: $primaryColor;
-				left: -10px;
-				top: 50%;
-				transform: translate3d(0, -50%, 0);
-				height: 4px;
-				width: 4px;
-			}
-		}
-
-		.links {
-			font-size: $smallFont;
+		span{
+			vertical-align: baseline;
 			font-weight: 100;
-			grid-column: 12;
-			grid-row: 1/4;
-			display: grid;
-			grid-auto-flow: column;
-			justify-content: end;
+			font-size: $smallFont;
 			
-			ul {
-
-				li {
-					text-align: right;
-				}
-				
-				li a {
-					pointer-events: auto;
-					cursor: pointer;
-					display: inline-block;
-				}
-
-			}
-
-			svg {
-				height: 1em;
-				grid-column: 1;
+			[data-split=line-wrapper] {
+				display: inline-block !important;
+				vertical-align: middle;
 				position: relative;
-				margin-right: 1em;
-				top: calc( #{$smallFont} * 0.2);
-
-				path {
-					fill: $primaryColor;
-				}
-			} 
+				bottom: -3px;
+			}
+			
+			[data-split=line] {
+				transform: translate3d(0, 100%, 0);
+				opacity: 0;
+				vertical-align: baseline;
+			}
 		}
 	}
+
+	.description{
+		font-size: $smallFont;
+		grid-column: 3/11;
+		grid-row: 9;
+		opacity: 0;
+		transform: translate3d(0, 5vh, 0);
+		align-self: end;
+
+		&:before {
+			content: "";
+			position: absolute;
+			background-color: $primaryColor;
+			left: -10px;
+			top: 50%;
+			transform: translate3d(0, -50%, 0);
+			height: 4px;
+			width: 4px;
+		}
+	}
+
+	.links {
+		font-size: $smallFont;
+		font-weight: 100;
+		grid-column: 12;
+		grid-row: 1/4;
+		display: grid;
+		grid-auto-flow: column;
+		justify-content: end;
+		
+		ul {
+
+			li {
+				text-align: right;
+			}
+			
+			li a {
+				pointer-events: auto;
+				cursor: pointer;
+				display: inline-block;
+			}
+
+		}
+
+		svg {
+			height: 1em;
+			grid-column: 1;
+			position: relative;
+			margin-right: 1em;
+			top: calc( #{$smallFont} * 0.2);
+
+			path {
+				fill: $primaryColor;
+			}
+		} 
+	}
+}
+
+.mobile-warn {
+	text-align: center;
+	font-size: 4vw;
 }
