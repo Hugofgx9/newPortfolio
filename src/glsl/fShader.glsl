@@ -46,8 +46,9 @@ void main() {
 
 	//wave y
 	//offset is for scroll
-	newUV = newUV * 0.98 + 0.01;
-	newUV.y += wave(1.5, 0.01, u_offsetPos);
+	float waveAmp = 0.02;
+	newUV = newUV * (1. - 2. * waveAmp)+ waveAmp; //center
+	newUV.y += wave(1.5, waveAmp, u_offsetPos);
 
 	vec4 image = texture2D(u_texture1, newUV );
 

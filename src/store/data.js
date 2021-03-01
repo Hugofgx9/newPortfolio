@@ -52,7 +52,7 @@ const data = {
     {
       name: 'Makyma',
       img: makymaImg,
-      description: 'Backend of a site offering ecological alternatives to everyday products and services, school project',
+      description: 'Backend of a website offering ecological alternatives to everyday products and services, school project',
       year: '2020',
       link: 'https://www.makyma.org/',
       color: 0.8,

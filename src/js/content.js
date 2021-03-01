@@ -183,5 +183,11 @@ export default class Content {
       ease: 'power2.inOut',
       duration: 1,
     },'<');
+
+    tl.to('.content .intership', {
+      opacity: 1,
+      ease: 'power2.inOut',
+      duration: 1,
+    }, '<');
   }
 }
