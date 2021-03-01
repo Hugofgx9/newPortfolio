@@ -4,6 +4,7 @@ import jeanGorinImg from 'url:../img/jeanGorin.png';
 import glamoraImg from 'url:../img/glamora.png';
 import hlmlImg from 'url:../img/hlml.png';
 import makymaImg from 'url:../img/makyma.png';
+import fluidArchitecture from 'url:src/img/fluidArchitecture.png';
 
 
 const data = {
@@ -15,6 +16,14 @@ const data = {
       year: '2021',
       link: 'https://3dshoe.netlify.app/',
       color: 0.05,
+    },
+    {
+      name: 'Fluid Architecture',
+      img: fluidArchitecture,
+      description: 'Gallery of modern architecture, first approach to images transitions',
+      year: '2021',
+      link: 'https://fluidarchitecture.hugofaugeroux.com',
+      color: 0.10,
     },
     {
       name: 'Portfolio Louise',
