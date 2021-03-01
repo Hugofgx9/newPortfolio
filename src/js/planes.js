@@ -11,14 +11,14 @@ export default class Planes {
     this.scene = scene;
     this.sceneCtx = sceneCtx;
 
-    this.baseWidth = window.innerWidth / 7;
-    this.baseHeight = ((this.baseWidth * 10) / 16) * 3.5;
     this.margin = 20;
+    this.openScale = 3.5;
+    this.baseWidth = window.innerWidth > window.innerHeight ? window.innerWidth / 7 : (window.innerWidth - (2 * this.margin)) / this.openScale;
+    this.baseHeight = ((this.baseWidth * 10) / 16) * this.openScale;
     this.clock = this.sceneCtx.clock;
     this.canWheel = false;
     this.resizeScale = new THREE.Vector2(1,1);
     this.initWidth = window.innerWidth;
-    this.openScale = 3.5;
     this.wavyAmount = { value: 0 };
     this.scrollOffset = 0;
 
@@ -117,70 +117,74 @@ export default class Planes {
       // let img = loaderIMG.load();
 
       let loader = new THREE.TextureLoader(loadManager);
-      let text = loader.load(data.projects[i].img);
+      loader.load(data.projects[i].img, text => {
 
-      let geometry = new THREE.PlaneGeometry(
-        this.baseWidth,
-        this.baseHeight,
-        100,
-        100
-      );
+        let geometry = new THREE.PlaneGeometry(
+          this.baseWidth,
+          this.baseHeight,
+          100,
+          100
+        );
 
-      let material = new THREE.ShaderMaterial({
-        uniforms: {
-          u_time: { type: 'f', value: 0 },
-          u_offsetPos: { type: 'f', value: 0 },
-          u_scale: { type: 'vec2', value: new THREE.Vector2(1, 1) },
-          u_skew: { type: 'f', value: 1 },
-          u_planeRatio: { type: 'f', value: this.baseWidth / this.baseHeight },
-          u_tint: { type: 'f', value: data.projects[i].color },
-          u_tint2: { type: 'f', value: data.projects[i].color },
-          u_tintTransfert: { type: 'f', value: 0 },
-          u_tintAmount: { type: 'f', value: 0 },
-          u_greyAmount: { type: 'f', value: 1 },
-          u_texture1: { type: 't', value: text },
-        },
+        let material = new THREE.ShaderMaterial({
+          uniforms: {
+            u_time: { type: 'f', value: 0 },
+            u_offsetPos: { type: 'f', value: 0 },
+            u_scale: { type: 'vec2', value: new THREE.Vector2(1, 1) },
+            u_skew: { type: 'f', value: 1 },
+            u_planeRatio: { type: 'f', value: this.baseWidth / this.baseHeight },
+            u_imageRatio: { type: 'f', value: text.image.width / text.image.height },
+            u_tint: { type: 'f', value: data.projects[i].color },
+            u_tint2: { type: 'f', value: data.projects[i].color },
+            u_tintTransfert: { type: 'f', value: 0 },
+            u_tintAmount: { type: 'f', value: 0 },
+            u_greyAmount: { type: 'f', value: 1 },
+            u_texture1: { type: 't', value: text },
+          },
 
-        vertexShader: vertexShader,
+          vertexShader: vertexShader,
 
-        fragmentShader: fragmentShader,
+          fragmentShader: fragmentShader,
 
-        defines: {
-          // tofixed(1) tronque le nombre avec 1 nombre après la virgule
-          PR: window.devicePixelRatio.toFixed(1),
-        },
+          defines: {
+            // tofixed(1) tronque le nombre avec 1 nombre après la virgule
+            PR: window.devicePixelRatio.toFixed(1),
+          },
 
-        side: THREE.DoubleSide,
+          side: THREE.DoubleSide,
+        });
+
+        let plane = new THREE.Mesh(geometry, material);
+        planeWrapper.add(plane);
+        this.planeGroup.add(planeWrapper);
+
+        //enable matrix transfo
+        plane.matrixAutoUpdate = false;
+        planeWrapper.matrixAutoUpdate = false;
+
+        plane.name = `mesh-${i}`;
+        planeWrapper.name = `mesh-wrapper-${i}`;
+
+        let posX = i * ( (this.baseWidth * this.resizeScale.x) + this.margin);
+
+        this.planes[i] = {
+          mesh: plane,
+          wrapper: planeWrapper,
+          isOpen: false,
+          basePos: posX,
+          offset: 0,
+          color: data.projects[i].color,
+          link: data.projects[i].link,
+        };
+
+        //scaleX
+        planeWrapper.gsapMatrix(0, {
+          index: 0,
+          to: 0.01,
+        });
+
       });
 
-      let plane = new THREE.Mesh(geometry, material);
-      planeWrapper.add(plane);
-      this.planeGroup.add(planeWrapper);
-
-      //enable matrix transfo
-      plane.matrixAutoUpdate = false;
-      planeWrapper.matrixAutoUpdate = false;
-
-      plane.name = `mesh-${i}`;
-      planeWrapper.name = `mesh-wrapper-${i}`;
-
-      let posX = i * ( (this.baseWidth * this.resizeScale.x) + this.margin);
-
-      this.planes.push({
-        mesh: plane,
-        wrapper: planeWrapper,
-        isOpen: false,
-        basePos: posX,
-        offset: 0,
-        color: data.projects[i].color,
-        link: data.projects[i].link,
-      });
-
-      //scaleX
-      planeWrapper.gsapMatrix(0, {
-        index: 0,
-        to: 0.01,
-      });
     }
     //this.centerObject(this.planeGroup);
   }
@@ -201,7 +205,7 @@ export default class Planes {
 
         //limit
         let min = 0;
-        let max = planeGroupWidth - this.baseHeight * Math.tan(0.4); // environ 1000
+        let max = planeGroupWidth - this.baseHeight * Math.tan(0.4) * 2; // environ 1000
         let xTarget = this.planeGroup.position.x + delta * 0.33;
 
         if ( min < -xTarget && max > -xTarget ) {

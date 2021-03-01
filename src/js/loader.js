@@ -53,8 +53,14 @@ export default class Loader {
 				this.$loader.remove();
 			}
 		});
+
+		// planes intro
 		tl.add( () => {
 			this.sceneCtx.Planes.introAnim();
 		});
+
+		tl.add( () => {
+			this.sceneCtx.Planes.Content.introAnim();
+		},'>2.5');
 	}
 }

@@ -11,6 +11,7 @@ uniform float u_tintTransfert;
 uniform float u_tintAmount;
 uniform float u_greyAmount;
 uniform float u_planeRatio;
+uniform float u_imageRatio;
 
 float wave (float speed, float amp, float offset) {
 	return cos((u_time + offset) * speed) * amp;
@@ -28,7 +29,7 @@ void main() {
 	/* RATIO SCALE AND SKEW */
 
 	vec2 newUV = v_uv;
-	float texRatio = 16. / 10.;
+	float texRatio = u_imageRatio;
 
 	// fit y
 	//newUV.y *= texRatio / u_planeRatio;

@@ -67,7 +67,8 @@ canvas {
 
 .content {
 	$primaryColor: rgb(100, 100, 100);
-	$smallFont: min(0.4em, 17px );
+	$smallFont: clamp(13px, 0.4em, 17px);
+
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -81,13 +82,58 @@ canvas {
 	pointer-events: none;
 	font-size: 3vw;
 	color: $primaryColor;
-
+	
+	h1, .links {
+		opacity: 0;
+	}
+	
 	h1{
 		font-size: $smallFont;
 		grid-column: 1/10;
 		grid-row: 1;
 	}
+	
+	.links {
+		font-size: $smallFont;
+		font-weight: 100;
+		grid-column: 12;
+		grid-row: 1/4;
+		display: grid;
+		grid-auto-flow: column;
+		justify-content: end;
+		
+		ul {
 
+			li {
+				text-align: right;
+			}
+			
+			li a {
+				pointer-events: auto;
+				cursor: pointer;
+				display: inline-block;
+				transition: color 0.5s ease;
+
+				&:hover{
+					color: rgb(20,20,20);
+				}
+			}
+
+		}
+
+		svg {
+			height: 1em;
+			grid-column: 1;
+			position: relative;
+			margin-right: 1em;
+			top: calc( #{$smallFont} * 0.2);
+
+			path {
+				fill: $primaryColor;
+			}
+		} 
+	}
+	
 	.title {
 		grid-column: 3/10;
 		grid-row: 2 ;
@@ -146,41 +192,14 @@ canvas {
 		}
 	}
 
-	.links {
+	.intership{
 		font-size: $smallFont;
-		font-weight: 100;
-		grid-column: 12;
-		grid-row: 1/4;
-		display: grid;
-		grid-auto-flow: column;
-		justify-content: end;
-		
-		ul {
-
-			li {
-				text-align: right;
-			}
-			
-			li a {
-				pointer-events: auto;
-				cursor: pointer;
-				display: inline-block;
-			}
-
-		}
-
-		svg {
-			height: 1em;
-			grid-column: 1;
-			position: relative;
-			margin-right: 1em;
-			top: calc( #{$smallFont} * 0.2);
-
-			path {
-				fill: $primaryColor;
-			}
-		} 
+		text-align: center;
+		grid-column: 4/10;
+		grid-row: 10;
+		align-self: end;
 	}
+
 }
 
 .mobile-warn {

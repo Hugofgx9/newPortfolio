@@ -12,7 +12,7 @@ export default class Content {
     this.projects = data.projects;
     this.currentTl = null;
 
-    this.links();
+    this.linksArrow();
   }
 
   open(i) {
@@ -138,11 +138,12 @@ export default class Content {
     }, '<');
   }
 
-  links(){
+  linksArrow(){
     //document.querySelector('.links').addEventListener('mousemove', (e) => console.log(e.clientY));
     let $svg = document.querySelector('.links svg');
     let $li = document.querySelectorAll('.links li a');
     let currentPos = 0;
+
 
     let height = $li[0].clientHeight;
 
@@ -166,7 +167,21 @@ export default class Content {
         });
       });
     })
+  }
 
+  introAnim() {
+    let tl = gsap.timeline();
 
+    tl.to('.content .links', {
+      opacity: 1,
+      ease: 'power2.inOut',
+      duration: 1,
+    });
+
+    tl.to('.content h1', {
+      opacity: 1,
+      ease: 'power2.inOut',
+      duration: 1,
+    },'<');
   }
 }
